@@ -93,6 +93,22 @@ def exec_update_sql(table: str, cols: Union[List[str], str], vals: Union[List[An
     cur.close()
     conn.close()
 
+# D
+def exec_delete_sql(table: str, where: Union[str, None]) -> None:
+    # table: テーブル名, where: 条件節
+    conn =  pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+\
+        ';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
+    cur = conn.cursor()
+
+    sql = "DELETE FROM [dbo].[" + table + "]\n"
+    if where is not None:
+        sql += "WHERE " + where
+
+    cur.execute(sql)
+    conn.commit()
+    cur.close()
+    conn.close()
+
 def exec_sql(sql: str) -> None:
     conn =  pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+\
         ';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
