@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/61add6f4-6b99-472f-8e73-3437b7f23b9b/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/slack-bot-test",
+    "appService.deploySubpath": "."
+}
