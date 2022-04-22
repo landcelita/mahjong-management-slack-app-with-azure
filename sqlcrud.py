@@ -15,12 +15,14 @@ driver= '{'+ os.environ.get('SQL_DRIVER') + '}'
 def enclose_quot(val):
     if isinstance(val, str):
         return "'" + val + "'"
+    elif val is None:
+        return "Null"
     else:
         return str(val)
 
 # C
-def exec_insert_sql(table: str, vals: List[str], cols: Union[List[str], None] = None) -> None :
-    # table: テーブル名, vals: 挿入する値, cols: 列の名前
+def exec_insert_sql(table: str, vals: List[Any], cols: List[str] = None) -> int :
+    # table: テーブル名, vals: 挿入する値, cols: 列の名前, 返り値はinsertした列のID
     conn =  pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+\
         ';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
     cur = conn.cursor()
@@ -37,8 +39,12 @@ def exec_insert_sql(table: str, vals: List[str], cols: Union[List[str], None] = 
 
     cur.execute(sql)
     conn.commit()
+
+    cur.execute("SELECT @@IDENTITY")
+    ret = cur.fetchone()
     cur.close()
     conn.close()
+    return ret[0]
 
 # R
 def exec_select_sql(table: str, cols: Union[List[str], None] = None, where: Union[str, None] = None) -> List[Tuple]:
