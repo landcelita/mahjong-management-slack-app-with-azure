@@ -1,0 +1,64 @@
+DROP TABLE IF EXISTS Riichi, Tenpai, Result, Score, Participants, GameStatus;
+
+CREATE TABLE GameStatus
+(
+	GameID INT IDENTITY PRIMARY KEY,
+	TonpuOrHanchan BIT NOT NULL,
+	Ba INT NOT NULL,
+	Kyoku INT NOT NULL,
+	Honba INT NOT NULL DEFAULT 0,
+	Finished BIT NOT NULL DEFAULT 0
+)
+
+CREATE TABLE Participants
+(
+	ParticipantsID INT IDENTITY PRIMARY KEY,
+	GameID INT REFERENCES GameStatus (GameID),
+	Part1SlackID NVARCHAR(128) NOT NULL,
+	Part2SlackID NVARCHAR(128) NOT NULL,
+	Part3SlackID NVARCHAR(128) NOT NULL,
+	Part4SlackID NVARCHAR(128) NOT NULL,
+)
+
+CREATE TABLE Score
+(
+	ScoreID INT IDENTITY PRIMARY KEY,
+	GameID INT REFERENCES GameStatus (GameID),
+	Player1Score INT NOT NULL DEFAULT 25000,
+	Player2Score INT NOT NULL DEFAULT 25000,
+	Player3Score INT NOT NULL DEFAULT 25000,
+	Player4Score INT NOT NULL DEFAULT 25000,
+)
+
+CREATE TABLE Result
+(
+	ResultID INT IDENTITY PRIMARY KEY,
+	GameID INT REFERENCES GameStatus (GameID),
+	Ba INT NOT NULL,
+	Kyoku INT NOT NULL,
+	Honba INT NOT NULL,
+	Winner INT,
+	TsumoRon INT,
+	Han INT,
+	Fu INT
+)
+
+CREATE TABLE Tenpai
+(
+	TenpaiID INT IDENTITY PRIMARY KEY,
+	ResultID INT REFERENCES Result (ResultID),
+	Player1Tenpai BIT NOT NULL,
+	Player2Tenpai BIT NOT NULL,
+	Player3Tenpai BIT NOT NULL,
+	Player4Tenpai BIT NOT NULL
+)
+
+CREATE TABLE Riichi
+(
+	RiichiID INT IDENTITY PRIMARY KEY,
+	ResultID INT REFERENCES Result (ResultID),
+	Player1Riichi BIT NOT NULL,
+	Player2Riichi BIT NOT NULL,
+	Player3Riichi BIT NOT NULL,
+	Player4Riichi BIT NOT NULL
+)
