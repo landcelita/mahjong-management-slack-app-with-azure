@@ -37,4 +37,20 @@ def create_riichi(result_id, is1Riichi, is2Riichi, is3Riichi, is4Riichi):
                     vals=[result_id, is1Riichi, is2Riichi, is3Riichi, is4Riichi])
 
 def read_result(result_id):
-    pass
+    ret = {}
+
+    res1 = exec_select_sql(table="Result",
+                        cols=['TsumoRon', 'Winner', 'Han', 'Fu'],
+                        where=f"ResultID = {int(result_id)}")
+    ret['tsumo_or_ron'] = res1[-1][0]
+    ret['winner'] = res1[-1][1]
+    ret['han'] = res1[-1][2]
+    ret['fu'] = res1[-1][3]
+    res2 = exec_select_sql(table="Riichi",
+                        cols=['Player1Riichi', 'Player2Riichi', 'Player3Riichi', 'Player4Riichi'])
+    ret['riichis'] = []
+    for i in range(len(res2[-1])):
+        if res2[-1][i]:
+            ret['riichis'].append(str(i + 1))
+
+    return ret

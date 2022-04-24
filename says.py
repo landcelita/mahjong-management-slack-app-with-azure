@@ -1,6 +1,7 @@
 import json
 import utility as util
 from const import BA, KYOKU, SCORE, FU_MAX
+import controller
 
 def gamestart(say):
     say(
@@ -328,7 +329,31 @@ def riichi(game_id: str, result_id: str, say):
 
 def confirmation(game_id: str, result_id: str, say):
     hidden = {'game_id': game_id, 'result_id': result_id}
-    # tsumo_or_ron, winner, han, fu, riichis = controller.read_result(result_id)
+    result = controller.read_result(result_id)
+    content = "以下の内容でよろしいですか?\n\n"
+
+    if result['fu'] == FU_MAX: 
+        result['fu'] = "満貫"
+    elif result['fu'] is not None:
+        result['fu'] = str(result['fu']) + "符"
+    else:
+        result['fu'] = ""
+
+    if result['tsumo_or_ron'] is None:
+        content += "流局\nリーチ者: "
+        for i in range(result['riichis']):
+            if result['riichis'][i] == True:
+                content += f"{i+1} "
+    elif result['tsumo_or_ron']:
+        content += "ロン\n"
+        content += f"上がり: {result['tsumo_or_ron']} → {result['winner']}\n"
+        content += f"{result['han']}翻" + result['fu'] + "\n"
+        content += f"リーチ者: {', '.join(result['riichis'])}" + "\n"
+    else:
+        content += "ツモ\n"
+        content += f"上がり: {result['winner']}\n"
+        content += f"{result['han']}翻" + result['fu'] + "\n"
+        content += f"リーチ者: {', '.join(result['riichis'])}" + "\n"
 
     say(
         {
@@ -337,38 +362,16 @@ def confirmation(game_id: str, result_id: str, say):
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": "以下の内容でよろしいですか？\n\nツモ\n上がり: player1\nn翻m符\nリーチ者: player3 player4"
+                        "text": content
                     }
                 },
                 {
                     "type": "actions",
-                    "elements": [
-                        {
-                            "type": "button",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "OK",
-                                "emoji": True
-                            },
-                            "value": "click_me_123",
-                            "action_id": "actionId-0"
-                        }
-                    ]
+                    "elements": [ util.confirm_button("ok", "actionId-confirmation-ok") ]
                 },
                 {
                     "type": "actions",
-                    "elements": [
-                        {
-                            "type": "button",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "再入力",
-                                "emoji": True
-                            },
-                            "value": "click_me_123",
-                            "action_id": "actionId-0"
-                        }
-                    ]
+                    "elements": [ util.confirm_button("retry", "actionId-confirmation-retry") ]
                 }
             ]
         }
