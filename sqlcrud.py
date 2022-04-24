@@ -30,6 +30,8 @@ def exec_insert_sql(table: str, vals: List[Any], cols: List[str] = None) -> int 
 
     # 前処理
     for i in range(len(vals)):
+        if type(vals[i]) == bool:
+            vals[i] = int(vals[i])
         vals[i] = enclose_quot(vals[i])
     
     sql = "INSERT INTO [dbo].[" + table + "]"

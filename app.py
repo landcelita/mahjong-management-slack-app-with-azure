@@ -445,12 +445,15 @@ def handle_riichi(ack, body, say, client):
     hidden = json.loads(body['message']['blocks'][0]['accessory']['options'][0]['value'])
     game_id = hidden['game_id']
     result_id = hidden['result_id']
-    pprint(body)
 
     riichi = [False, False, False, False]
     for option in riichi_options:
         value = json.loads(option['value'])
         riichi[int(value['val']) - 1] = True
+
+    create_riichi(result_id, *riichi)
+
+
 
     # test中は消えると面倒なのでコメントアウト　あとで戻しておく
     # delete_this_message(body, client)
@@ -504,6 +507,11 @@ def update_result(result_id: str, cols, vals):
                     cols=cols,
                     vals=vals,
                     where="ResultID = " + result_id)
+
+def create_riichi(result_id, is1Riichi, is2Riichi, is3Riichi, is4Riichi):
+    exec_insert_sql(table="Riichi",
+                    cols=["ResultID", "Player1Riichi", "Player2Riichi", "Player3Riichi", "Player4Riichi"],
+                    vals=[result_id, is1Riichi, is2Riichi, is3Riichi, is4Riichi])
 
 ################################## Say ##########################################
 
@@ -722,6 +730,9 @@ def say_riichi(game_id: str, result_id: str, say):
             ]
         }
     )
+
+def say_confirmation(game_id: str, result_id: str, say):
+    pass
 
 ################################## Utility ##########################################
 
