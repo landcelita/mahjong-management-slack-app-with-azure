@@ -417,7 +417,7 @@ def handle_tsumo_han(ack, body, say, client):
     # delete_this_message(body, client)
 
 @app.action("actionId-fu")
-def handle_some_action(ack, body, say, client):
+def handle_fu(ack, body, say, client):
     ack()
     fu_option = body['state']['values']['fu']['static_select-action']['selected_option']
 
@@ -429,10 +429,28 @@ def handle_some_action(ack, body, say, client):
 
     fu_value = json.loads(fu_option['value'])
     fu = int(fu_value['val']) if fu_value['val'] != "more" else FU_MAX
-    game_id = fu_value['game_id']
+    game_id = str(fu_value['game_id'])
     result_id = str(fu_value['result_id'])
 
     update_result(result_id, "fu", fu)
+    say_riichi(game_id, result_id, say)
+
+    # test中は消えると面倒なのでコメントアウト　あとで戻しておく
+    # delete_this_message(body, client)
+
+@app.action("actionId-riichi")
+def handle_riichi(ack, body, say, client):
+    ack()
+    riichi_options = body['state']['values']['riichi']['checkboxes-action']['selected_options']
+    hidden = json.loads(body['message']['blocks'][0]['accessory']['options'][0]['value'])
+    game_id = hidden['game_id']
+    result_id = hidden['result_id']
+    pprint(body)
+
+    riichi = [False, False, False, False]
+    for option in riichi_options:
+        value = json.loads(option['value'])
+        riichi[int(value['val']) - 1] = True
 
     # test中は消えると面倒なのでコメントアウト　あとで戻しておく
     # delete_this_message(body, client)
@@ -448,6 +466,10 @@ def handle_static_select_action(ack, body, logger):
 
 @app.action("radio_buttons-action")
 def handle_radio_buttons_action(ack, body, logger):
+    ack()
+
+@app.action("checkboxes-action")
+def handle_checkboxes_action(ack, body, logger):
     ack()
 
 ################################## Controller ##########################################
@@ -640,6 +662,62 @@ def say_fu(game_id: str, result_id: str, han: str, say):
                 {
                     "type": "actions",
                     "elements": [ confirm_button("value", "actionId-fu") ]
+                }
+            ]
+        }
+    )
+
+def say_riichi(game_id: str, result_id: str, say):
+    hidden = {'game_id': game_id, 'result_id': result_id}
+
+    say(
+        {
+            "blocks": [
+                {
+                    "type": "section",
+                    "block_id": "riichi",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "リーチ者を選んでください"
+                    },
+                    "accessory": {
+                        "type": "checkboxes",
+                        "options": [
+                            {
+                                "text": {
+                                    "type": "mrkdwn",
+                                    "text": "player1"
+                                },
+                                "value": json.dumps({"val": "1"} | hidden)
+                            },
+                            {
+                                "text": {
+                                    "type": "mrkdwn",
+                                    "text": "player2"
+                                },
+                                "value": json.dumps({"val": "2"} | hidden)
+                            },
+                            {
+                                "text": {
+                                    "type": "mrkdwn",
+                                    "text": "player3"
+                                },
+                                "value": json.dumps({"val": "3"} | hidden)
+                            },
+                            {
+                                "text": {
+                                    "type": "mrkdwn",
+                                    "text": "player4"
+                                },
+                                "value": json.dumps({"val": "4"} | hidden)
+                            }
+                        ],
+                        "action_id": "checkboxes-action"
+                    }
+                },
+                {
+                    "type": "actions",
+                    "elements": [ confirm_button("value", "actionId-riichi") ]
                 }
             ]
         }
