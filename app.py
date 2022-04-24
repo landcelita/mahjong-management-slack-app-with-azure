@@ -450,10 +450,9 @@ def handle_riichi(ack, body, say, client):
     for option in riichi_options:
         value = json.loads(option['value'])
         riichi[int(value['val']) - 1] = True
-
     create_riichi(result_id, *riichi)
 
-
+    say_confirmation(game_id, result_id, say)
 
     # test中は消えると面倒なのでコメントアウト　あとで戻しておく
     # delete_this_message(body, client)
@@ -512,6 +511,9 @@ def create_riichi(result_id, is1Riichi, is2Riichi, is3Riichi, is4Riichi):
     exec_insert_sql(table="Riichi",
                     cols=["ResultID", "Player1Riichi", "Player2Riichi", "Player3Riichi", "Player4Riichi"],
                     vals=[result_id, is1Riichi, is2Riichi, is3Riichi, is4Riichi])
+
+def read_result(result_id):
+    pass
 
 ################################## Say ##########################################
 
@@ -732,7 +734,52 @@ def say_riichi(game_id: str, result_id: str, say):
     )
 
 def say_confirmation(game_id: str, result_id: str, say):
-    pass
+    hidden = {'game_id': game_id, 'result_id': result_id}
+    # tsumo_or_ron, winner, han, fu, riichis = read_result(result_id)
+
+    say(
+        {
+            "blocks": [
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "以下の内容でよろしいですか？\n\nツモ\n上がり: player1\nn翻m符\nリーチ者: player3 player4"
+                    }
+                },
+                {
+                    "type": "actions",
+                    "elements": [
+                        {
+                            "type": "button",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "OK",
+                                "emoji": True
+                            },
+                            "value": "click_me_123",
+                            "action_id": "actionId-0"
+                        }
+                    ]
+                },
+                {
+                    "type": "actions",
+                    "elements": [
+                        {
+                            "type": "button",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "再入力",
+                                "emoji": True
+                            },
+                            "value": "click_me_123",
+                            "action_id": "actionId-0"
+                        }
+                    ]
+                }
+            ]
+        }
+    )
 
 ################################## Utility ##########################################
 
