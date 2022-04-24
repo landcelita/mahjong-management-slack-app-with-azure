@@ -220,7 +220,7 @@ SCORE = {
         'oya': {'ron': 144000, 'tsumo': 48000},
     }
 }
-
+FU_MAX = 999999999
 
 ################################## Event Handler ##########################################
 
@@ -417,9 +417,25 @@ def handle_tsumo_han(ack, body, say, client):
     # delete_this_message(body, client)
 
 @app.action("actionId-fu")
-def handle_some_action(ack, body, logger):
+def handle_some_action(ack, body, say, client):
     ack()
-    pprint(body)
+    fu_option = body['state']['values']['fu']['static_select-action']['selected_option']
+
+    validated = True
+    if fu_option is None:
+        say("符数を選択してください")
+        validated = False
+    if not validated: return
+
+    fu_value = json.loads(fu_option['value'])
+    fu = int(fu_value['val']) if fu_value['val'] != "more" else FU_MAX
+    game_id = fu_value['game_id']
+    result_id = str(fu_value['result_id'])
+
+    update_result(result_id, "fu", fu)
+
+    # test中は消えると面倒なのでコメントアウト　あとで戻しておく
+    # delete_this_message(body, client)
 
 # 以下はINFOを抑制するため
 @app.action("users_select-action")
@@ -460,6 +476,12 @@ def create_result(game_id, winner, tsumo_ron, han, fu=None):
                                 vals=[game_id, ba, kyoku, honba, winner, 0, han, fu],
                                 cols=["GameID", "Ba", "Kyoku", "Honba", "Winner", "TsumoRon", "Han", "Fu"])
     return (result_id, ba, kyoku, honba)
+
+def update_result(result_id: str, cols, vals):
+    exec_update_sql(table="Result",
+                    cols=cols,
+                    vals=vals,
+                    where="ResultID = " + result_id)
 
 ################################## Say ##########################################
 
