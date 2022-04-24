@@ -1,7 +1,7 @@
 import json
 import logging
 import os
-import pprint
+from pprint import pprint
 from typing import Dict
 import urllib
 from sqlcrud import exec_insert_sql, exec_select_sql, exec_update_sql, exec_delete_sql
@@ -367,7 +367,7 @@ def handle_confirm_players(ack, body, say, client):
 @app.action("actionId-done")
 def handle_done(ack, body, say, client):
     ack()
-    # pprint.pprint(body)
+    # pprint(body)
     option = body['state']['values']['how_finished']['radio']['selected_option']
 
     validated = True
@@ -408,6 +408,11 @@ def handle_tsumo_han(ack, body, say, client):
     winner = winner_value['val']
     game_id = han_value['game_id']
 
+    create_result(game_id, winner, 0, han)
+
+    if SCORE[han]['fu_required']:
+        pass
+
     # test中は消えると面倒なのでコメントアウト　あとで戻しておく
     # delete_this_message(body, client)
 
@@ -432,6 +437,25 @@ def init(TonpuOrHanchan, player1Id, player2Id, player3Id, player4Id):
     exec_insert_sql("Score", [game_id, 25000, 25000, 25000, 25000])
     exec_insert_sql("Participants", [game_id, player1Id, player2Id, player3Id, player4Id])
     return game_id
+
+def create_result(game_id, winner, tsumo_ron, han, fu=None):
+    game_id = str(game_id)
+
+    # tsumo_ron: 0のときはツモ、1-4のときはロンされた人
+    res = exec_select_sql(table="GameStatus",
+                        cols=["Ba", "Kyoku", "Honba"], 
+                        where="GameID = " + game_id)
+
+    ba, kyoku, honba = res[0]
+    game_id = int(game_id)
+    winner = int(winner)
+    tsumo_ron = int(tsumo_ron)
+    han = int(han)
+    if fu is not None: fu = int(fu)
+    result_id = exec_insert_sql(table="Result",
+                                vals=[game_id, ba, kyoku, honba, winner, 0, han, fu],
+                                cols=["GameID", "Ba", "Kyoku", "Honba", "Winner", "TsumoRon", "Han", "Fu"])
+    return (result_id, ba, kyoku, honba)
 
 ################################## Say ##########################################
 
@@ -598,7 +622,7 @@ def slack_events():
     r = urllib.parse.unquote(request.get_data().decode())
     r1 = r.replace("payload=", "")
     res = json.loads(r1)
-    # pprint.pprint(res)
+    # pprint(res)
 
     return handler.handle(request)
 

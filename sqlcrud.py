@@ -1,4 +1,5 @@
 import os
+from pprint import pprint
 from typing import Any, List, Tuple, Union
 import pyodbc
 from dotenv import load_dotenv
@@ -58,7 +59,7 @@ def exec_select_sql(table: str, cols: Union[List[str], None] = None, where: Unio
         sql += "* "
     else:
         sql += ", ".join(cols)
-    sql += "FROM [dbo].[" + table + "]"
+    sql += " FROM [dbo].[" + table + "]"
     if where is not None:
         sql += " WHERE " + where
 
