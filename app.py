@@ -408,14 +408,18 @@ def handle_tsumo_han(ack, body, say, client):
     winner = winner_value['val']
     game_id = han_value['game_id']
 
-    create_result(game_id, winner, 0, han)
+    result_id, _, _, _ = create_result(game_id, winner, 0, han)
 
     if SCORE[han]['fu_required']:
-        pass
+        say_fu(game_id, str(result_id), han, say)
 
     # test中は消えると面倒なのでコメントアウト　あとで戻しておく
     # delete_this_message(body, client)
 
+@app.action("actionId-fu")
+def handle_some_action(ack, body, logger):
+    ack()
+    pprint(body)
 
 # 以下はINFOを抑制するため
 @app.action("users_select-action")
@@ -574,6 +578,50 @@ def say_ron(game_id, say):
 
 def say_ryukyoku(game_id, say):
     pass
+
+def say_fu(game_id: str, result_id: str, han: str, say):
+    hidden = {'game_id': game_id, 'result_id': result_id}
+    fus = SCORE[han]['fu']
+    fu_list = []
+    values = []
+
+    for fu in fus:
+        if fu == 'more': fu_list.append("それ以上")
+        else: fu_list.append(fu + "符")
+        
+        values.append(json.dumps({'val': fu} | hidden))
+
+    say(
+        {
+            "blocks": [
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "符数"
+                    },
+                    "block_id": "fu",
+                    "accessory": {
+                        "type": "static_select",
+                        "placeholder": {
+                            "type": "plain_text",
+                            "text": "翻数を選んでください",
+                            "emoji": True
+                        },
+                        "options": generate_option_dicts(
+                                fu_list,
+                                values
+                        ),
+                        "action_id": "static_select-action"
+                    }
+                },
+                {
+                    "type": "actions",
+                    "elements": [ confirm_button("value", "actionId-fu") ]
+                }
+            ]
+        }
+    )
 
 ################################## Utility ##########################################
 
