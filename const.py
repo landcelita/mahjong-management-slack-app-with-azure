@@ -2,6 +2,8 @@ BA = ['error', '東', '南', '西', '北']
 
 KYOKU = ['error', '一', '二', '三', '四']
 
+FU_MAX = 999999999
+
 SCORE = {
     '1': {
         'fu_required': True,
@@ -93,7 +95,7 @@ SCORE = {
     },
     '3': {
         'fu_required': True,
-        'fu': ['20', '25', '30', '40', '50', '60', 'more'],
+        'fu': ['20', '25', '30', '40', '50', '60', f'{FU_MAX}'],
         '20': {
             'ko': {'ron': None, 'tsumo': [700, 1300]},
             'oya': {'ron': None, 'tsumo': 1300},
@@ -118,14 +120,14 @@ SCORE = {
             'ko': {'ron': 7700, 'tsumo': [2000, 3900]},
             'oya': {'ron': 11600, 'tsumo': 3900},
         },
-        'more': {
+        f'{FU_MAX}': {
             'ko': {'ron': 8000, 'tsumo': [2000, 4000]},
             'oya': {'ron': 12000, 'tsumo': 4000},
         }
     },
     '4': {
         'fu_required': True,
-        'fu': ['20', '25', '30', 'more'],
+        'fu': ['20', '25', '30', f'{FU_MAX}'],
         '20': {
             'ko': {'ron': None, 'tsumo': [1300, 2600]},
             'oya': {'ron': None, 'tsumo': 2600},
@@ -138,7 +140,7 @@ SCORE = {
             'ko': {'ron': 7700, 'tsumo': [2000, 3900]},
             'oya': {'ron': 11600, 'tsumo': 3900},
         },
-        'more': {
+        f'{FU_MAX}': {
             'ko': {'ron': 8000, 'tsumo': [2000, 4000]},
             'oya': {'ron': 12000, 'tsumo': 4000},
         }
@@ -199,5 +201,3 @@ SCORE = {
         'oya': {'ron': 144000, 'tsumo': 48000},
     }
 }
-
-FU_MAX = 999999999

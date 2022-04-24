@@ -234,7 +234,7 @@ def fu(game_id: str, result_id: str, han: str, say):
     values = []
 
     for fu in fus:
-        if fu == 'more': fu_list.append("それ以上")
+        if fu == f'{FU_MAX}': fu_list.append("それ以上")
         else: fu_list.append(fu + "符")
         
         values.append(json.dumps({'val': fu} | hidden))
@@ -367,11 +367,26 @@ def confirmation(game_id: str, result_id: str, say):
                 },
                 {
                     "type": "actions",
-                    "elements": [ util.confirm_button("ok", "actionId-confirmation-ok") ]
+                    "block_id": "confirm",
+                    "elements": [util.confirm_button(
+                        json.dumps(hidden),
+                        "actionId-confirmation-ok"
+                    )]
                 },
                 {
                     "type": "actions",
-                    "elements": [ util.confirm_button("retry", "actionId-confirmation-retry") ]
+                    "elements": [
+                        {
+                            "type": "button",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "再入力",
+                                "emoji": True
+                            },
+                            "value": "retry",
+                            "action_id": "actionId-confirmation-retry"
+                        }
+                    ]
                 }
             ]
         }

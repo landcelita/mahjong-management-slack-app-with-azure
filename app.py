@@ -121,7 +121,7 @@ def handle_fu(ack, body, say, client):
     if not validated: return
 
     fu_value = json.loads(fu_option['value'])
-    fu = int(fu_value['val']) if fu_value['val'] != "more" else FU_MAX
+    fu = int(fu_value['val'])
     game_id = str(fu_value['game_id'])
     result_id = str(fu_value['result_id'])
 
@@ -146,6 +146,18 @@ def handle_riichi(ack, body, say, client):
     controller.create_riichi(result_id, *riichi)
 
     says.confirmation(game_id, result_id, say)
+
+    # test中は消えると面倒なのでコメントアウト　あとで戻しておく
+    # util.delete_this_message(body, client)
+
+@app.action("actionId-confirmation-ok")
+def handle_confirmation_ok(ack, body, logger):
+    ack()
+    hidden = json.loads(body['message']['blocks'][1]['elements'][0]['value'])
+    game_id = hidden['game_id']
+    result_id = hidden['result_id']
+
+    controller.settle(game_id, result_id)
 
     # test中は消えると面倒なのでコメントアウト　あとで戻しておく
     # util.delete_this_message(body, client)
