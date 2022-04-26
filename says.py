@@ -392,3 +392,43 @@ def confirmation(game_id: str, result_id: str, say):
         }
     )
 
+def kyoku_result(old_scores, old_game_status, new_scores, say):
+    scores_str = []
+    for i in range(4):
+        str = f"player{i+1}: {new_scores[i]}点"\
+            + '(' + '{:+}'.format(new_scores[i] - old_scores[i]) + ')\n'
+    say(
+        {
+            "blocks": [
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": f"{BA[old_game_status['ba']]}{KYOKU[old_game_status['kyoku']]}局"
+                            + f"{old_game_status['honba']}本場" if old_game_status['honba'] > 0 else ""
+                            + "結果\n"
+                            + scores_str[0]
+                            + scores_str[1]
+                            + scores_str[2]
+                            + scores_str[3]
+                            + '\n'
+                    }
+                }
+            ]
+        }
+    )
+
+def game_over(say):
+    say(
+        {
+            "blocks": [
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "ゲーム終了"
+                    }
+                }
+            ]
+        }
+    )

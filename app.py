@@ -160,8 +160,12 @@ def handle_confirmation_ok(ack, body, logger, say):
     old_scores, old_game_status, new_scores, new_game_status\
         = controller.settle(game_id, result_id, say)
     
-    says.kyoku_result(old_scores, old_game_status, 
-        new_scores, new_game_status, say)
+    says.kyoku_result(old_scores, old_game_status, new_scores, say)
+    if not new_game_status['finished']:
+        says.wait_done(new_game_status['ba'], new_game_status['kyoku'], \
+                    new_game_status['honba'], game_id, say)
+    else:
+        says.game_over(say)
 
     # test中は消えると面倒なのでコメントアウト　あとで戻しておく
     # util.delete_this_message(body, client)
