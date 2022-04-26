@@ -33,11 +33,6 @@ def update_fu(result_id: int, fu: int):
 def confirm_riichi(result_id: int, riichi: List[bool]):
     data.create_riichi([result_id, *riichi])
 
-# 明日以降settle(と以下の関数)をなんとかする
-# files.dioの通りにすすめる
-# だいたいdata.pyに書いてあるのを真似すれば良さそう
-# ビジネスロジックとデータアクセスをきっちり分けていこう
-
 def settle(game_id: int, result_id: int):
     result = data.read_result(result_id)
     riichis = data.read_riichi(result_id, "ResultID",
@@ -52,7 +47,7 @@ def settle(game_id: int, result_id: int):
         # new_game_status = settle_ryukyoku(result, scores, game_status, tenpai)
         pass
     elif result['tsumo_or_ron'] == 0:
-        new_game_status = settle_tsumo(result, riichis, scores, game_status)
+        new_scores, new_game_status = settle_tsumo(result, riichis, scores, game_status)
     else:
         # new_game_status = settle_ron(result, scores, game_status)
         pass
@@ -63,14 +58,13 @@ def settle_ryukyoku(result, scores, game_status, tenpai):
 
 def settle_tsumo(result, riichis, scores, game_status):
     new_scores = business.calc_new_score_tsumo(result, riichis, scores, game_status)
-
     data.update_score(game_status["game_id"], new_scores, "GameID",
                     ["Player1Score", "Player2Score", "Player3Score", "Player4Score", "Kyotaku"])
 
     new_game_status = business.calc_new_status_tsumo(result, riichis, new_scores, game_status)
     data.update_game_status(result['game_id'], new_game_status)
 
-    return new_game_status
+    return new_scores, new_game_status
 
 def settle_ron(result, scores, game_status):
     pass # todo
