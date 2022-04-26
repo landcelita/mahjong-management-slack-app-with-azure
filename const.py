@@ -201,3 +201,22 @@ SCORE = {
         'oya': {'ron': 144000, 'tsumo': 48000},
     }
 }
+
+GAMESTATUS_PASCAL_TO_SNAKE = {
+    "TonpuOrHanchan": "tonpu_or_hanchan",
+    "Ba": "ba",
+    "Kyoku": "kyoku",
+    "Honba": "honba",
+    "Finished": "finished",
+}
+
+RESULT_PASCAL_TO_SNAKE = {
+    "GameID": "game_id",
+    "Ba": "ba",
+    "Kyoku": "kyoku",
+    "Honba": "honba",
+    "Winner": "winner",
+    "TsumoRon": "tsumo_ron",
+    "Han": "han",
+    "Fu": "fu"
+}

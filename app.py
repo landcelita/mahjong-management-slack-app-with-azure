@@ -97,11 +97,11 @@ def handle_tsumo_han(ack, body, say, client):
 
     han_value = json.loads(han_option['value'])
     winner_value = json.loads(winner_option['value'])
-    han = han_value['val']
-    winner = winner_value['val']
-    game_id = han_value['game_id']
+    han = int(han_value['val'])
+    winner = int(winner_value['val'])
+    game_id = int(han_value['game_id'])
 
-    result_id, _, _, _ = controller.create_result(game_id, winner, 0, han)
+    result_id = controller.confirm_result(game_id, winner, 0, han)
 
     if SCORE[han]['fu_required']:
         says.fu(game_id, str(result_id), han, say)
@@ -122,10 +122,10 @@ def handle_fu(ack, body, say, client):
 
     fu_value = json.loads(fu_option['value'])
     fu = int(fu_value['val'])
-    game_id = str(fu_value['game_id'])
-    result_id = str(fu_value['result_id'])
+    game_id = int(fu_value['game_id'])
+    result_id = int(fu_value['result_id'])
 
-    controller.update_result(result_id, "fu", fu)
+    controller.update_fu(result_id, fu)
     says.riichi(game_id, result_id, say)
 
     # test中は消えると面倒なのでコメントアウト　あとで戻しておく
@@ -136,14 +136,14 @@ def handle_riichi(ack, body, say, client):
     ack()
     riichi_options = body['state']['values']['riichi']['checkboxes-action']['selected_options']
     hidden = json.loads(body['message']['blocks'][0]['accessory']['options'][0]['value'])
-    game_id = hidden['game_id']
-    result_id = hidden['result_id']
+    game_id = int(hidden['game_id'])
+    result_id = int(hidden['result_id'])
 
     riichi = [False, False, False, False]
     for option in riichi_options:
         value = json.loads(option['value'])
         riichi[int(value['val']) - 1] = True
-    controller.create_riichi(result_id, *riichi)
+    controller.confirm_riichi(result_id, riichi)
 
     says.confirmation(game_id, result_id, say)
 
@@ -154,8 +154,8 @@ def handle_riichi(ack, body, say, client):
 def handle_confirmation_ok(ack, body, logger):
     ack()
     hidden = json.loads(body['message']['blocks'][1]['elements'][0]['value'])
-    game_id = hidden['game_id']
-    result_id = hidden['result_id']
+    game_id = int(hidden['game_id'])
+    result_id = int(hidden['result_id'])
 
     controller.settle(game_id, result_id)
 
