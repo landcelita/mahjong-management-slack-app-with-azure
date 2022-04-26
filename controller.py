@@ -4,8 +4,14 @@ import data
 import business
 from const import SCORE
 
-def init(TonpuOrHanchan: int, player1Id: str, player2Id: str, player3Id: str, player4Id: str):
-    game_start_status = [TonpuOrHanchan, 1, 1, 0, 0]
+def init(tonpu_or_hanchan: bool, player1Id: str, player2Id: str, player3Id: str, player4Id: str):
+    game_start_status = {
+        'tonpu_or_hanchan': tonpu_or_hanchan,
+        'ba': 1,
+        'kyoku': 1,
+        'honba': 0,
+        'finished': 0
+    }
     game_id = data.create_game_status(game_start_status)
     
     game_start_scores = [game_id, 25000, 25000, 25000, 25000, 0]
@@ -21,14 +27,23 @@ def confirm_result(game_id: int, winner: int, tsumo_ron: Union[int, None],\
     # tsumo_ron: 0のときはツモ、1-4のときはロンされた人
 
     game_status = data.read_game_status(game_id)
-    result = [game_id, game_status['ba'], game_status['kyoku'], 
-            game_status['honba'], winner, tsumo_ron, han, fu]
+    result = {
+        'game_id': game_id,
+        'ba': game_status['ba'],
+        'kyoku': game_status['kyoku'],
+        'honba': game_status['honba'],
+        'winner': winner,
+        'tsumo_ron': tsumo_ron,
+        'han': han,
+        'fu': fu
+    }
     result_id = data.create_result(result)
 
     return result_id
 
 def update_fu(result_id: int, fu: int):
-    data.update_result(result_id, fu, cols = "Fu")
+    updating_data = {"fu": fu}
+    data.update_result(result_id, updating_data)
 
 def confirm_riichi(result_id: int, riichi: List[bool]):
     data.create_riichi([result_id, *riichi])
@@ -52,6 +67,7 @@ def settle(game_id: int, result_id: int):
         # new_game_status = settle_ron(result, scores, game_status)
         pass
 
+    return scores, game_status, new_scores, new_game_status
 
 def settle_ryukyoku(result, scores, game_status, tenpai):
     pass # todo

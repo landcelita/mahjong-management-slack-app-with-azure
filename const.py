@@ -210,6 +210,14 @@ GAMESTATUS_PASCAL_TO_SNAKE = {
     "Finished": "finished",
 }
 
+GAMESTATUS_SNAKE_TO_PASCAL = {
+    "tonpu_or_hanchan": "TonpuOrHanchan",
+    "ba": "Ba",
+    "kyoku": "Kyoku",
+    "honba": "Honba",
+    "finished": "Finished",
+}
+
 RESULT_PASCAL_TO_SNAKE = {
     "GameID": "game_id",
     "Ba": "ba",
@@ -218,7 +226,18 @@ RESULT_PASCAL_TO_SNAKE = {
     "Winner": "winner",
     "TsumoRon": "tsumo_ron",
     "Han": "han",
-    "Fu": "fu"
+    "Fu": "fu",
+}
+
+RESULT_SNAKE_TO_PASCAL = {
+    "game_id": "GameID",
+    "ba": "Ba",
+    "kyoku": "Kyoku",
+    "honba": "Honba",
+    "winner": "Winner",
+    "tsumo_ron": "TsumoRon",
+    "han": "Han",
+    "fu": "Fu",
 }
 
 KYOTAKU_INDEX = 4

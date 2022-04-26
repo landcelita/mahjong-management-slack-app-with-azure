@@ -1,11 +1,12 @@
-from typing import List, Union
-from const import GAMESTATUS_PASCAL_TO_SNAKE, RESULT_PASCAL_TO_SNAKE
+from typing import List, Union, Dict
+from const import GAMESTATUS_PASCAL_TO_SNAKE, GAMESTATUS_SNAKE_TO_PASCAL, RESULT_PASCAL_TO_SNAKE, RESULT_SNAKE_TO_PASCAL
 import crud
 import re
 
-def create_game_status(vals: List[int], \
-        cols: List[str] = ["TonpuOrHanchan", "Ba", "Kyoku", "Honba", "Finished"]):
-    game_id = crud.exec_insert_sql("GameStatus", vals, cols)
+def create_game_status(vals: Dict[str, int]):
+    keys = [GAMESTATUS_SNAKE_TO_PASCAL[key] for key in list(vals.keys())]
+    values = list(vals.values())
+    game_id = crud.exec_insert_sql("GameStatus", values, keys)
     return game_id
 
 def read_game_status(whereval: int, wherecol: str = "GameID",
@@ -14,7 +15,7 @@ def read_game_status(whereval: int, wherecol: str = "GameID",
     res = crud.exec_select_sql("GameStatus", cols, 
                         f"{wherecol} = {whereval}")
 
-    col_names = GAMESTATUS_PASCAL_TO_SNAKE[cols]
+    col_names = [GAMESTATUS_PASCAL_TO_SNAKE[col] for col in cols]
 
     if onlylast:
         ret = {}
@@ -30,11 +31,14 @@ def read_game_status(whereval: int, wherecol: str = "GameID",
             ret.append(ret0)
         return ret
 
-# readがdictで返すならdictで渡す必要がある
-def update_game_status(whereval: int, vals: Union[List[int], int],
-        wherecol: str = "GameID",
-        cols: Union[List[str], str] = ["TonpuOrHanchan", "Ba", "Kyoku", "Honba", "Finished"]):
-    pass
+def update_game_status(whereval: int, vals: Dict[str, int],
+        wherecol: str = "GameID"):
+    keys = [GAMESTATUS_SNAKE_TO_PASCAL[key] for key in list(vals.keys())]
+    values = list(vals.values())
+    crud.exec_update_sql(table="GameStatus",
+                        cols=keys,
+                        vals=values,
+                        where=f"{wherecol} = {whereval}")
 
 def create_score(vals: List[int], cols: List[str] = ["GameID", "Player1Score",\
         "Player2Score", "Player3Score", "Player4Score", "Kyotaku"]):
@@ -61,16 +65,17 @@ def create_participants(vals: List[Union[int, str]], cols: List[str] = \
         ["GameID", "Player1SlackID", "Player2SlackID", "Player3SlackID", "Player4SlackID"]):
     return crud.exec_insert_sql("Participants", vals, cols)
 
-def create_result(vals: List[Union[int, None]], cols: List[str] = \
-        ["GameID", "Ba", "Kyoku", "Honba", "Winner", "TsumoRon", "Han", "Fu"]):
-    return crud.exec_insert_sql("Result", vals, cols)
+def create_result(vals: Dict[str, Union[int, None]]):
+    keys = [RESULT_SNAKE_TO_PASCAL[key] for key in list(vals.keys())]
+    values = list(vals.values())
+    return crud.exec_insert_sql("Result", values, keys)
 
 def read_result(whereval: int, wherecol: str = "ResultID",
         cols: List[str] = ["GameID", "Ba", "Kyoku", "Honba", "Winner", "TsumoRon", "Han", "Fu"],
         onlylast: bool = True):
     res = crud.exec_select_sql("Result", cols, f"{wherecol} = {whereval}")
 
-    col_names = RESULT_PASCAL_TO_SNAKE[cols]
+    col_names = [RESULT_PASCAL_TO_SNAKE[col] for col in cols]
 
     if onlylast:
         ret = {}
@@ -86,15 +91,13 @@ def read_result(whereval: int, wherecol: str = "ResultID",
             ret.append(ret0)
         return ret
 
-# readがdictで返すならdictで渡す必要がある
-def update_result(whereval: Union[int, None], vals: Union[List[Union[int, None]], Union[int, None]],
-        wherecol: str = "ResultID",
-        cols: Union[List[str], str] = ["GameID", "Ba", "Kyoku", "Honba", "Winner",
-        "TsumoRon", "Han", "Fu"],
-        ):
+def update_result(whereval: Union[int, None], vals: Dict[str, Union[int, None]],
+        wherecol: str = "ResultID"):
+    keys = [RESULT_SNAKE_TO_PASCAL[key] for key in list(vals.keys())]
+    values = list(vals.values())
     crud.exec_update_sql(table="Result",
-                        cols=cols,
-                        vals=vals,
+                        cols=keys,
+                        vals=values,
                         where=f"{wherecol} = {whereval}")
 
 def create_riichi(vals: List[int], cols: List[str] = \

@@ -391,3 +391,4 @@ def confirmation(game_id: str, result_id: str, say):
             ]
         }
     )
+

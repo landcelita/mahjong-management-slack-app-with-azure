@@ -47,7 +47,7 @@ def handle_confirm_players(ack, body, say, client):
         validated = False
     if(not validated): return
 
-    tonpu_or_hanchan = int(tonpu_or_hanchan_obj['value'])
+    tonpu_or_hanchan = bool(tonpu_or_hanchan_obj['value'])
 
     game_id = controller.init(tonpu_or_hanchan, player1Id, player2Id, player3Id, player4Id)
 
@@ -151,13 +151,17 @@ def handle_riichi(ack, body, say, client):
     # util.delete_this_message(body, client)
 
 @app.action("actionId-confirmation-ok")
-def handle_confirmation_ok(ack, body, logger):
+def handle_confirmation_ok(ack, body, logger, say):
     ack()
     hidden = json.loads(body['message']['blocks'][1]['elements'][0]['value'])
     game_id = int(hidden['game_id'])
     result_id = int(hidden['result_id'])
 
-    controller.settle(game_id, result_id)
+    old_scores, old_game_status, new_scores, new_game_status\
+        = controller.settle(game_id, result_id, say)
+    
+    says.kyoku_result(old_scores, old_game_status, 
+        new_scores, new_game_status, say)
 
     # test中は消えると面倒なのでコメントアウト　あとで戻しておく
     # util.delete_this_message(body, client)
