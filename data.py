@@ -30,6 +30,7 @@ def read_game_status(whereval: int, wherecol: str = "GameID",
             ret.append(ret0)
         return ret
 
+# readがdictで返すならdictで渡す必要がある
 def update_game_status(whereval: int, vals: Union[List[int], int],
         wherecol: str = "GameID",
         cols: Union[List[str], str] = ["TonpuOrHanchan", "Ba", "Kyoku", "Honba", "Finished"]):
@@ -85,6 +86,7 @@ def read_result(whereval: int, wherecol: str = "ResultID",
             ret.append(ret0)
         return ret
 
+# readがdictで返すならdictで渡す必要がある
 def update_result(whereval: Union[int, None], vals: Union[List[Union[int, None]], Union[int, None]],
         wherecol: str = "ResultID",
         cols: Union[List[str], str] = ["GameID", "Ba", "Kyoku", "Honba", "Winner",
