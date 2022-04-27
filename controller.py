@@ -1,3 +1,4 @@
+from pprint import pprint
 from typing import Union, List
 from crud import exec_insert_sql, exec_select_sql, exec_update_sql, exec_delete_sql
 import data
@@ -48,21 +49,24 @@ def update_fu(result_id: int, fu: int):
 def confirm_riichi(result_id: int, riichi: List[bool]):
     data.create_riichi([result_id, *riichi])
 
+def get_result(result_id: int):
+    return data.read_result(result_id)
+
 def settle(game_id: int, result_id: int):
     result = data.read_result(result_id)
     riichis = data.read_riichi(result_id, "ResultID",
                 cols=["Player1Riichi", "Player2Riichi", "Player3Riichi", "Player4Riichi"])
     scores = list(data.read_score(game_id, "GameID",
-                cols=["Player1Score", "Player2Score", "Player3Score", "Player4Score"]))
+                cols=["Player1Score", "Player2Score", "Player3Score", "Player4Score", "Kyotaku"]))
     game_status = data.read_game_status(game_id)
     
     
-    if result['tsumo_or_ron'] is None:
+    if result['tsumo_ron'] is None:
         # tenpai = list(read_tenpai(result_id))
         # new_game_status = settle_ryukyoku(result, scores, game_status, tenpai)
         pass
-    elif result['tsumo_or_ron'] == 0:
-        new_scores, new_game_status = settle_tsumo(result, riichis, scores, game_status)
+    elif result['tsumo_ron'] == 0:
+        new_scores, new_game_status = settle_tsumo(result, riichis, scores, game_status, game_id)
     else:
         # new_game_status = settle_ron(result, scores, game_status)
         pass
@@ -72,12 +76,12 @@ def settle(game_id: int, result_id: int):
 def settle_ryukyoku(result, scores, game_status, tenpai):
     pass # todo
 
-def settle_tsumo(result, riichis, scores, game_status):
+def settle_tsumo(result, riichis, scores, game_status, game_id):
     new_scores = business.calc_new_score_tsumo(result, riichis, scores, game_status)
-    data.update_score(game_status["game_id"], new_scores, "GameID",
+    data.update_score(game_id, new_scores, "GameID",
                     ["Player1Score", "Player2Score", "Player3Score", "Player4Score", "Kyotaku"])
-
-    new_game_status = business.calc_new_status_tsumo(result, riichis, new_scores, game_status)
+    
+    new_game_status = business.calc_new_status_tsumo(result, new_scores, game_status)
     data.update_game_status(result['game_id'], new_game_status)
 
     return new_scores, new_game_status

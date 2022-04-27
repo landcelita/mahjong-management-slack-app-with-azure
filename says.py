@@ -1,4 +1,6 @@
 import json
+from pprint import pprint
+from typing import Dict, List, Union
 import utility as util
 from const import BA, KYOKU, SCORE, FU_MAX
 import controller
@@ -327,33 +329,34 @@ def riichi(game_id: str, result_id: str, say):
         }
     )
 
-def confirmation(game_id: str, result_id: str, say):
+def confirmation(game_id: str, result_id: str, result: Dict[str, Union[int, None]],
+         riichis: List[bool], say):
     hidden = {'game_id': game_id, 'result_id': result_id}
-    result = controller.read_result(result_id)
     content = "以下の内容でよろしいですか?\n\n"
 
     if result['fu'] == FU_MAX: 
         result['fu'] = "満貫"
     elif result['fu'] is not None:
-        result['fu'] = str(result['fu']) + "符"
+        result['fu'] = f"{result['fu']}符"
     else:
         result['fu'] = ""
 
-    if result['tsumo_or_ron'] is None:
-        content += "流局\nリーチ者: "
-        for i in range(result['riichis']):
-            if result['riichis'][i] == True:
-                content += f"{i+1} "
-    elif result['tsumo_or_ron']:
+    riichi_str = "リーチ者: "
+    for i in range(len(riichis)):
+        if riichis[i] == True: riichi_str += f"{i+1} "
+
+    if result['tsumo_ron'] is None:
+        content += "流局\n" + riichi_str
+    elif result['tsumo_ron']:
         content += "ロン\n"
-        content += f"上がり: {result['tsumo_or_ron']} → {result['winner']}\n"
+        content += f"上がり: {result['tsumo_ron']} → {result['winner']}\n"
         content += f"{result['han']}翻" + result['fu'] + "\n"
-        content += f"リーチ者: {', '.join(result['riichis'])}" + "\n"
+        content += riichi_str
     else:
         content += "ツモ\n"
         content += f"上がり: {result['winner']}\n"
         content += f"{result['han']}翻" + result['fu'] + "\n"
-        content += f"リーチ者: {', '.join(result['riichis'])}" + "\n"
+        content += riichi_str
 
     say(
         {
@@ -393,10 +396,21 @@ def confirmation(game_id: str, result_id: str, say):
     )
 
 def kyoku_result(old_scores, old_game_status, new_scores, say):
-    scores_str = []
-    for i in range(4):
-        str = f"player{i+1}: {new_scores[i]}点"\
-            + '(' + '{:+}'.format(new_scores[i] - old_scores[i]) + ')\n'
+
+    pprint(old_scores)
+    pprint(old_game_status)
+    pprint(new_scores)
+    diff = [new_scores[i] - old_scores[i] for i in range(len(new_scores))]
+
+    text = f"{BA[old_game_status['ba']]}{KYOKU[old_game_status['kyoku']]}局"
+    if old_game_status['honba'] > 0: text += f"{old_game_status['honba']}本場"
+    text += "\n"
+    text += "得点\n"\
+            f"player1: {new_scores[0]}点 ({'{:+}'.format(diff[0])})\n"\
+            f"player2: {new_scores[1]}点 ({'{:+}'.format(diff[1])})\n"\
+            f"player3: {new_scores[2]}点 ({'{:+}'.format(diff[2])})\n"\
+            f"player4: {new_scores[3]}点 ({'{:+}'.format(diff[3])})\n"\
+    
     say(
         {
             "blocks": [
@@ -404,14 +418,7 @@ def kyoku_result(old_scores, old_game_status, new_scores, say):
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"{BA[old_game_status['ba']]}{KYOKU[old_game_status['kyoku']]}局"
-                            + f"{old_game_status['honba']}本場" if old_game_status['honba'] > 0 else ""
-                            + "結果\n"
-                            + scores_str[0]
-                            + scores_str[1]
-                            + scores_str[2]
-                            + scores_str[3]
-                            + '\n'
+                        "text": text
                     }
                 }
             ]

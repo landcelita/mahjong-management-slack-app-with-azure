@@ -27,6 +27,7 @@ def exec_insert_sql(table: str, vals: List[Any], cols: List[str] = None) -> int 
     conn =  pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+\
         ';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
     cur = conn.cursor()
+    vals = vals.copy()
 
     # 前処理
     for i in range(len(vals)):
@@ -77,12 +78,15 @@ def exec_update_sql(table: str, cols: Union[List[str], str], vals: Union[List[An
     conn =  pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+\
         ';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
     cur = conn.cursor()
+    vals = vals.copy()
 
     # 前処理
     if isinstance(vals, List):
         for i in range(len(vals)):
+            if type(vals[i]) == bool: vals[i] = int(vals[i])
             vals[i] = enclose_quot(vals[i])
     else:
+        if type(vals) == bool: vals = int(vals)
         vals = enclose_quot(vals)
     
     sql = "UPDATE [dbo].[" + table + "]\nSET "

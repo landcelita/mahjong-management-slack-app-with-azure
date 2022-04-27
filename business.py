@@ -1,3 +1,4 @@
+from pprint import pprint
 from typing import List, Union, Dict
 from const import BA_LAST_KYOKU, HANCHAN, KYOTAKU_INDEX, OLAS_HANCHAN_BA, OLAS_KYOKU, OLAS_TONPU_BA, SCORE, TONPU
 
@@ -6,7 +7,7 @@ def calc_new_score_tsumo(result: Dict[str, Union[int, None]],
                     riichis: List[Union[int, bool]],
                     scores: List[int], 
                     game_status: Dict[str, Union[int, bool]]):
-    new_scores = scores
+    new_scores = scores.copy()
 
     # 供託金に移動
     for i in range(len(riichis)):
@@ -45,10 +46,9 @@ def calc_new_score_tsumo(result: Dict[str, Union[int, None]],
     return new_scores
 
 def calc_new_status_tsumo(result: Dict[str, Union[int, None]], 
-                    riichis: List[Union[int, bool]],
                     scores: List[int], 
                     game_status: Dict[str, Union[int, bool]]):
-    new_game_status = game_status
+    new_game_status = game_status.copy()
 
     # 終了条件 トビorオーラス(子アガリor親トップ)
     is_finished: bool = False
@@ -81,7 +81,7 @@ def is_olas(game_status):
         if game_status['ba'] == OLAS_TONPU_BA and game_status['kyoku'] == OLAS_KYOKU:
             return True
         return False
-    elif game_status['toupu_or_hanchan'] == HANCHAN:
+    elif game_status['tonpu_or_hanchan'] == HANCHAN:
         if game_status['ba'] == OLAS_HANCHAN_BA and game_status['kyoku'] == OLAS_KYOKU:
             return True
         return False

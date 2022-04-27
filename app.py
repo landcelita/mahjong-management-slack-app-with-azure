@@ -55,7 +55,7 @@ def handle_confirm_players(ack, body, say, client):
     says.wait_done(1, 1, 0, game_id, say)
 
     # test中は消えると面倒なのでコメントアウト　あとで戻しておく
-    # util.delete_this_message(body, client)
+    util.delete_this_message(body, client)
 
 @app.action("actionId-done")
 def handle_done(ack, body, say, client):
@@ -78,7 +78,7 @@ def handle_done(ack, body, say, client):
         says.ryukyoku(value['game_id'], say)
 
     # test中は消えると面倒なのでコメントアウト　あとで戻しておく
-    # util.delete_this_message(body, client)
+    util.delete_this_message(body, client)
 
 @app.action("actionId-tsumo-han")
 def handle_tsumo_han(ack, body, say, client):
@@ -103,11 +103,11 @@ def handle_tsumo_han(ack, body, say, client):
 
     result_id = controller.confirm_result(game_id, winner, 0, han)
 
-    if SCORE[han]['fu_required']:
-        says.fu(game_id, str(result_id), han, say)
+    if SCORE[str(han)]['fu_required']:
+        says.fu(str(game_id), str(result_id), str(han), say)
 
     # test中は消えると面倒なのでコメントアウト　あとで戻しておく
-    # util.delete_this_message(body, client)
+    util.delete_this_message(body, client)
 
 @app.action("actionId-fu")
 def handle_fu(ack, body, say, client):
@@ -126,10 +126,10 @@ def handle_fu(ack, body, say, client):
     result_id = int(fu_value['result_id'])
 
     controller.update_fu(result_id, fu)
-    says.riichi(game_id, result_id, say)
+    says.riichi(str(game_id), str(result_id), say)
 
     # test中は消えると面倒なのでコメントアウト　あとで戻しておく
-    # util.delete_this_message(body, client)
+    util.delete_this_message(body, client)
 
 @app.action("actionId-riichi")
 def handle_riichi(ack, body, say, client):
@@ -139,16 +139,16 @@ def handle_riichi(ack, body, say, client):
     game_id = int(hidden['game_id'])
     result_id = int(hidden['result_id'])
 
-    riichi = [False, False, False, False]
+    riichis = [False, False, False, False]
     for option in riichi_options:
         value = json.loads(option['value'])
-        riichi[int(value['val']) - 1] = True
-    controller.confirm_riichi(result_id, riichi)
-
-    says.confirmation(game_id, result_id, say)
+        riichis[int(value['val']) - 1] = True
+    controller.confirm_riichi(result_id, riichis)
+    result = controller.get_result(result_id)
+    says.confirmation(str(game_id), str(result_id), result, riichis, say)
 
     # test中は消えると面倒なのでコメントアウト　あとで戻しておく
-    # util.delete_this_message(body, client)
+    util.delete_this_message(body, client)
 
 @app.action("actionId-confirmation-ok")
 def handle_confirmation_ok(ack, body, logger, say):
@@ -158,7 +158,7 @@ def handle_confirmation_ok(ack, body, logger, say):
     result_id = int(hidden['result_id'])
 
     old_scores, old_game_status, new_scores, new_game_status\
-        = controller.settle(game_id, result_id, say)
+        = controller.settle(game_id, result_id)
     
     says.kyoku_result(old_scores, old_game_status, new_scores, say)
     if not new_game_status['finished']:
@@ -168,7 +168,7 @@ def handle_confirmation_ok(ack, body, logger, say):
         says.game_over(say)
 
     # test中は消えると面倒なのでコメントアウト　あとで戻しておく
-    # util.delete_this_message(body, client)
+    util.delete_this_message(body, client)
 
 # 以下はINFOを抑制するため
 @app.action("users_select-action")
@@ -187,7 +187,13 @@ def handle_radio_buttons_action(ack, body, logger):
 def handle_checkboxes_action(ack, body, logger):
     ack()
 
+@app.action("radio")
+def handle_some_action(ack, body, logger):
+    ack()
 
+@app.event("message")
+def handle_message_events(body, logger):
+    pass
 ################################## Entrypoint ##########################################
 
 from flask import Flask, request
