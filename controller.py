@@ -71,8 +71,9 @@ def settle(game_id: int, result_id: int):
     
     
     if result['tsumo_ron'] is None:
-        # tenpai = list(read_tenpai(result_id))
-        # new_game_status = settle_ryukyoku(result, scores, game_status, tenpai)
+        tenpais = list(data.read_tenpai(result_id, "ResultID",
+                cols=["Player1Tenpai", "Player2Tenpai", "Player3Tenpai", "Player4Tenpai"]))
+        new_scores, new_game_status = settle_ryukyoku(result, riichis, scores, game_status, tenpais, game_id)
         pass
     elif result['tsumo_ron'] == 0:
         new_scores, new_game_status = settle_tsumo(result, riichis, scores, game_status, game_id)
@@ -81,15 +82,22 @@ def settle(game_id: int, result_id: int):
 
     return scores, game_status, new_scores, new_game_status
 
-def settle_ryukyoku(result, scores, game_status, tenpai):
-    pass # todo calc_new_status()は名前を変えて、テンパイはテンパイ用に処理を作ろう(あまりに流れが違うので)。
+def settle_ryukyoku(result, riichis, scores, game_status, tenpais, game_id):
+    new_scores = business.calc_new_score_ryukyoku(riichis, scores, tenpais)
+    data.update_score(game_id, new_scores, "GameID",
+                    ["Player1Score", "Player2Score", "Player3Score", "Player4Score", "Kyotaku"])
+    
+    new_game_status = business.calc_new_status_ryukyoku(result, new_scores, game_status, tenpais)
+    data.update_game_status(result['game_id'], new_game_status)
+
+    return new_scores, new_game_status
 
 def settle_tsumo(result, riichis, scores, game_status, game_id):
     new_scores = business.calc_new_score_tsumo(result, riichis, scores, game_status)
     data.update_score(game_id, new_scores, "GameID",
                     ["Player1Score", "Player2Score", "Player3Score", "Player4Score", "Kyotaku"])
     
-    new_game_status = business.calc_new_status(result, new_scores, game_status)
+    new_game_status = business.calc_new_status_agari(result, new_scores, game_status)
     data.update_game_status(result['game_id'], new_game_status)
 
     return new_scores, new_game_status
@@ -99,7 +107,7 @@ def settle_ron(result, riichis, scores, game_status, game_id):
     data.update_score(game_id, new_scores, "GameID",
                     ["Player1Score", "Player2Score", "Player3Score", "Player4Score", "Kyotaku"])
     
-    new_game_status = business.calc_new_status(result, new_scores, game_status)
+    new_game_status = business.calc_new_status_agari(result, new_scores, game_status)
     data.update_game_status(result['game_id'], new_game_status)
 
     return new_scores, new_game_status

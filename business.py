@@ -79,7 +79,65 @@ def calc_new_score_ron(result: Dict[str, Union[int, None]],
 
     return new_scores
 
-def calc_new_status(result: Dict[str, Union[int, None]], 
+def calc_new_score_ryukyoku(riichis: List[Union[int, bool]],
+                    scores: List[int], 
+                    tenpais: List[Union[int, bool]]):
+    new_scores = scores.copy()
+
+    # 供託金に移動
+    for i in range(len(riichis)):
+        if riichis[i]:
+            new_scores[i] -= 1000
+            new_scores[KYOTAKU_INDEX] += 1000
+
+    # ノーテン罰符のやり取り
+    if tenpais.count(True) == 0 or tenpais.count(True) == 4:
+        pass # 0, 4人テンパイ時やり取りなし
+    elif tenpais.count(True) == 1:
+        for i in range(len(tenpais)):
+            new_scores[i] += 3000 if tenpais[i] else -1000
+    elif tenpais.count(True) == 2:
+        for i in range(len(tenpais)):
+            new_scores[i] += 1500 if tenpais[i] else -1500
+    elif tenpais.count(True) == 3:
+        for i in range(len(tenpais)):
+            new_scores[i] += 1000 if tenpais[i] else -3000
+
+    return new_scores
+
+def calc_new_status_ryukyoku(result: Dict[str, Union[int, None]], 
+                    scores: List[int], 
+                    game_status: Dict[str, Union[int, bool]],
+                    tenpais: List[Union[int, bool]]):
+    new_game_status = game_status.copy()
+
+    # 終了条件 トビorオーラス(親ノーテンor親トップ)
+    is_finished: bool = False
+    if any([x < 0 for x in scores]): is_finished = True
+    if is_olas(game_status):
+        if not tenpais[OLAS_KYOKU-1]: is_finished = True
+        # ラス親は起家から最も遠いので、他家の点数に比べて真に大きくなくてはならない
+        if all([x < scores[OLAS_KYOKU-1] for x in scores[0:OLAS_KYOKU-1]]):
+            is_finished = True
+    if is_finished:
+        new_game_status['finished'] = True
+        return new_game_status
+
+    # 連チャン条件
+    if tenpais[game_status['kyoku']-1]:
+        new_game_status['honba'] += 1
+        return new_game_status
+
+    # 次局
+    new_game_status['honba'] = 0
+    new_game_status['kyoku'] += 1
+    if new_game_status['kyoku'] == BA_LAST_KYOKU + 1:
+        new_game_status['ba'] += 1
+        new_game_status['kyoku'] = 1
+
+    return new_game_status
+
+def calc_new_status_agari(result: Dict[str, Union[int, None]], 
                     scores: List[int], 
                     game_status: Dict[str, Union[int, bool]]):
     new_game_status = game_status.copy()
