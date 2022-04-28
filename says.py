@@ -287,7 +287,60 @@ def ron(game_id, say):
     )
 
 def ryukyoku(game_id, say):
-    pass
+    hidden = {'game_id': game_id}
+
+    say(
+        {
+            "blocks": [
+                {
+                    "type": "section",
+                    "block_id": "tenpai",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "テンパイ者を選んでください"
+                    },
+                    "accessory": {
+                        "type": "checkboxes",
+                        "options": [
+                            {
+                                "text": {
+                                    "type": "mrkdwn",
+                                    "text": "player1"
+                                },
+                                "value": json.dumps({"val": "1"} | hidden)
+                            },
+                            {
+                                "text": {
+                                    "type": "mrkdwn",
+                                    "text": "player2"
+                                },
+                                "value": json.dumps({"val": "2"} | hidden)
+                            },
+                            {
+                                "text": {
+                                    "type": "mrkdwn",
+                                    "text": "player3"
+                                },
+                                "value": json.dumps({"val": "3"} | hidden)
+                            },
+                            {
+                                "text": {
+                                    "type": "mrkdwn",
+                                    "text": "player4"
+                                },
+                                "value": json.dumps({"val": "4"} | hidden)
+                            }
+                        ],
+                        "action_id": "checkboxes-action"
+                    }
+                },
+                {
+                    "type": "actions",
+                    "elements": [ util.confirm_button("value", "actionId-tenpai") ]
+                }
+            ]
+        }
+    )
 
 def fu(game_id: str, result_id: str, han: str, say):
     hidden = {'game_id': game_id, 'result_id': result_id}
