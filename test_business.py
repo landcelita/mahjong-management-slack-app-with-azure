@@ -1,5 +1,5 @@
 import unittest
-from business import calc_new_status_tsumo, calc_new_score_tsumo
+from business import calc_new_status, calc_new_score_tsumo
 
 class Test_calc_new_score_tsumo(unittest.TestCase):
     def test_calc_new_score_tsumo_1(self):
@@ -81,7 +81,7 @@ class Test_calc_new_status_tsumo(unittest.TestCase):
             'finished': False
         }
 
-        actual = calc_new_status_tsumo(result, scores, game_status)
+        actual = calc_new_status(result, scores, game_status)
         expected = {
             'tonpu_or_hanchan': 0,
             'ba': 1,
@@ -108,7 +108,7 @@ class Test_calc_new_status_tsumo(unittest.TestCase):
             'finished': False
         }
 
-        actual = calc_new_status_tsumo(result, scores, game_status)
+        actual = calc_new_status(result, scores, game_status)
         expected = {
             'tonpu_or_hanchan': 0,
             'ba': 1,
@@ -135,7 +135,7 @@ class Test_calc_new_status_tsumo(unittest.TestCase):
             'finished': False
         }
 
-        actual = calc_new_status_tsumo(result, scores, game_status)
+        actual = calc_new_status(result, scores, game_status)
         expected = {
             'tonpu_or_hanchan': 0,
             'ba': 1,
@@ -162,7 +162,7 @@ class Test_calc_new_status_tsumo(unittest.TestCase):
             'finished': False
         }
 
-        actual = calc_new_status_tsumo(result, scores, game_status)
+        actual = calc_new_status(result, scores, game_status)
         expected = {
             'tonpu_or_hanchan': 1,
             'ba': 2,
@@ -189,7 +189,7 @@ class Test_calc_new_status_tsumo(unittest.TestCase):
             'finished': False
         }
 
-        actual = calc_new_status_tsumo(result, scores, game_status)
+        actual = calc_new_status(result, scores, game_status)
         expected = {
             'tonpu_or_hanchan': 0,
             'ba': 1,
@@ -216,7 +216,7 @@ class Test_calc_new_status_tsumo(unittest.TestCase):
             'finished': False
         }
 
-        actual = calc_new_status_tsumo(result, scores, game_status)
+        actual = calc_new_status(result, scores, game_status)
         expected = {
             'tonpu_or_hanchan': 0,
             'ba': 1,
@@ -243,7 +243,7 @@ class Test_calc_new_status_tsumo(unittest.TestCase):
             'finished': False
         }
 
-        actual = calc_new_status_tsumo(result, scores, game_status)
+        actual = calc_new_status(result, scores, game_status)
         expected = {
             'tonpu_or_hanchan': 1,
             'ba': 1,
@@ -270,7 +270,7 @@ class Test_calc_new_status_tsumo(unittest.TestCase):
             'finished': False
         }
 
-        actual = calc_new_status_tsumo(result, scores, game_status)
+        actual = calc_new_status(result, scores, game_status)
         expected = {
             'tonpu_or_hanchan': 1,
             'ba': 2,
@@ -297,7 +297,7 @@ class Test_calc_new_status_tsumo(unittest.TestCase):
             'finished': False
         }
 
-        actual = calc_new_status_tsumo(result, scores, game_status)
+        actual = calc_new_status(result, scores, game_status)
         expected = {
             'tonpu_or_hanchan': 1,
             'ba': 2,

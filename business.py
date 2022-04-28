@@ -46,7 +46,40 @@ def calc_new_score_tsumo(result: Dict[str, Union[int, None]],
 
     return new_scores
 
-def calc_new_status_tsumo(result: Dict[str, Union[int, None]], 
+def calc_new_score_ron(result: Dict[str, Union[int, None]], 
+                    riichis: List[Union[int, bool]],
+                    scores: List[int], 
+                    game_status: Dict[str, Union[int, bool]]):
+    new_scores = scores.copy()
+
+    # 供託金に移動
+    for i in range(len(riichis)):
+        if riichis[i]:
+            new_scores[i] -= 1000
+            new_scores[KYOTAKU_INDEX] += 1000
+
+    # ロンの分
+    oya_or_ko = None
+    if result['winner'] == game_status['kyoku']:
+        oya_or_ko = "oya"
+    else:
+        oya_or_ko = "ko"
+
+    lose = SCORE[str(result['han'])][str(result['fu'])][oya_or_ko]['ron'] \
+            if SCORE[str(result['han'])]['fu_required'] \
+            else SCORE[str(result['han'])][oya_or_ko]['ron']
+    lose += 300 * game_status['honba']
+    
+    new_scores[result['winner'] - 1] += lose
+    new_scores[result['tsumo_ron'] - 1] -= lose
+
+    # 供託金の分
+    new_scores[result['winner'] - 1] += new_scores[KYOTAKU_INDEX]
+    new_scores[KYOTAKU_INDEX] = 0
+
+    return new_scores
+
+def calc_new_status(result: Dict[str, Union[int, None]], 
                     scores: List[int], 
                     game_status: Dict[str, Union[int, bool]]):
     new_game_status = game_status.copy()

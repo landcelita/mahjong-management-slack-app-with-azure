@@ -68,24 +68,29 @@ def settle(game_id: int, result_id: int):
     elif result['tsumo_ron'] == 0:
         new_scores, new_game_status = settle_tsumo(result, riichis, scores, game_status, game_id)
     else:
-        # new_game_status = settle_ron(result, scores, game_status)
-        pass
+        new_scores, new_game_status = settle_ron(result, riichis, scores, game_status, game_id)
 
     return scores, game_status, new_scores, new_game_status
 
 def settle_ryukyoku(result, scores, game_status, tenpai):
-    pass # todo
+    pass # todo calc_new_status()だけは全部統一したほうがよさそう？
 
 def settle_tsumo(result, riichis, scores, game_status, game_id):
     new_scores = business.calc_new_score_tsumo(result, riichis, scores, game_status)
     data.update_score(game_id, new_scores, "GameID",
                     ["Player1Score", "Player2Score", "Player3Score", "Player4Score", "Kyotaku"])
     
-    new_game_status = business.calc_new_status_tsumo(result, new_scores, game_status)
+    new_game_status = business.calc_new_status(result, new_scores, game_status)
     data.update_game_status(result['game_id'], new_game_status)
 
     return new_scores, new_game_status
 
-def settle_ron(result, scores, game_status):
-    pass # todo
+def settle_ron(result, riichis, scores, game_status, game_id):
+    new_scores = business.calc_new_score_ron(result, riichis, scores, game_status)
+    data.update_score(game_id, new_scores, "GameID",
+                    ["Player1Score", "Player2Score", "Player3Score", "Player4Score", "Kyotaku"])
+    
+    new_game_status = business.calc_new_status(result, new_scores, game_status)
+    data.update_game_status(result['game_id'], new_game_status)
 
+    return new_scores, new_game_status

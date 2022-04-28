@@ -51,7 +51,7 @@ def handle_confirm_players(ack, body, say, client):
 
     game_id = controller.init(tonpu_or_hanchan, player1Id, player2Id, player3Id, player4Id)
 
-    say("member(あとでちゃんと処理入れとく)")
+    say("member(saysの方にあとでちゃんと処理入れとく,東風戦か半荘戦かも記述)")
     says.wait_done(1, 1, 0, game_id, say)
 
     util.delete_this_message(body, client)
@@ -141,7 +141,7 @@ def handle_some_action(ack, body, logger, say):
     winner = int(winner_value['val'])
     loser = int(loser_value['val'])
     game_id = int(han_value['game_id'])
-    
+
     result_id = controller.confirm_result(game_id, winner, loser, han)
 
     if SCORE[str(han)]['fu_required']:
