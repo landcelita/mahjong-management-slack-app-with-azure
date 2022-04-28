@@ -205,7 +205,8 @@ def handle_riichi(ack, body, say, client):
         riichis[int(value['val']) - 1] = True
     controller.confirm_riichi(result_id, riichis)
     result = controller.get_result(result_id)
-    says.confirmation(say, str(game_id), str(result_id), result, riichis)
+    tenpais = controller.get_tenpai(result_id)
+    says.confirmation(say, str(game_id), str(result_id), result, riichis, tenpais)
 
     util.delete_this_message(body, client)
 

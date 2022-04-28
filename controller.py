@@ -55,6 +55,12 @@ def confirm_riichi(result_id: int, riichi: List[bool]):
 def get_result(result_id: int):
     return data.read_result(result_id)
 
+def get_tenpai(result_id: int):
+    result = data.read_result(result_id)
+    if result['tsumo_ron'] is not None: return None
+    return data.read_tenpai(result_id, "ResultID",
+                cols=["Player1Tenpai", "Player2Tenpai", "Player3Tenpai", "Player4Tenpai"])
+
 def settle(game_id: int, result_id: int):
     result = data.read_result(result_id)
     riichis = data.read_riichi(result_id, "ResultID",

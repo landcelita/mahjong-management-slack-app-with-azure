@@ -443,7 +443,7 @@ def riichi(say, game_id: str, result_id: str):
     )
 
 def confirmation(say, game_id: str, result_id: str, result: Dict[str, Union[int, None]],
-         riichis: List[bool]):
+         riichis: List[bool], tenpais: Union[None, List[bool]]):
     hidden = {'game_id': game_id, 'result_id': result_id}
     content = "以下の内容でよろしいですか?\n\n"
     resultc = result.copy()
@@ -459,8 +459,11 @@ def confirmation(say, game_id: str, result_id: str, result: Dict[str, Union[int,
     for i in range(len(riichis)):
         if riichis[i] == True: riichi_str += f"{i+1} "
 
-    if resultc['tsumo_ron'] is None:
-        content += "流局\n" + riichi_str
+    if tenpais is not None:
+        tenpai_str = "テンパイ者: "
+        for i in range(len(tenpais)):
+            if tenpais[i] == True: tenpai_str += f"{i+1} "
+        content += "流局\n" + tenpai_str + "\n" + riichi_str
     elif resultc['tsumo_ron']:
         content += "ロン\n"
         content += f"上がり: {resultc['winner']} ← {resultc['tsumo_ron']}\n"

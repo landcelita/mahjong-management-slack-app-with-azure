@@ -119,3 +119,14 @@ def read_riichi(whereval: int , wherecol: str = "RiichiID",
 def create_tenpai(vals: List[int], cols: List[str] = \
         ["ResultID", "Player1Tenpai", "Player2Tenpai", "Player3Tenpai", "Player4Tenpai"]):
     return crud.exec_insert_sql("Tenpai", vals, cols)
+
+def read_tenpai(whereval: int , wherecol: str = "TenpaiID",
+        cols: List[str] = ["ResultID", "Player1Tenpai", "Player2Tenpai",
+                            "Player3Tenpai", "Player4Tenpai"],
+        onlylast: bool = True):
+    res = crud.exec_select_sql("Tenpai", cols, f"{wherecol} = {whereval}")
+    
+    if onlylast:
+        return res[-1]
+    else:
+        return res
