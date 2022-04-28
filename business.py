@@ -11,8 +11,9 @@ def calc_new_score_tsumo(result: Dict[str, Union[int, None]],
 
     # 供託金に移動
     for i in range(len(riichis)):
-        new_scores[i] -= 1000
-        new_scores[KYOTAKU_INDEX] += 1000
+        if riichis[i]:
+            new_scores[i] -= 1000
+            new_scores[KYOTAKU_INDEX] += 1000
 
     # ツモの分
     if result['winner'] == game_status['kyoku']: # 親
@@ -28,7 +29,7 @@ def calc_new_score_tsumo(result: Dict[str, Union[int, None]],
     else: # 子
         ko_lose, oya_lose = SCORE[str(result['han'])][str(result['fu'])]['ko']['tsumo'] \
                             if SCORE[str(result['han'])]['fu_required'] \
-                            else SCORE[str(result['han'])]['oya']['tsumo']
+                            else SCORE[str(result['han'])]['ko']['tsumo']
         ko_lose += 100 * game_status['honba']
         oya_lose += 100 * game_status['honba']
         for i in range(1, 5):
@@ -52,9 +53,9 @@ def calc_new_status_tsumo(result: Dict[str, Union[int, None]],
 
     # 終了条件 トビorオーラス(子アガリor親トップ)
     is_finished: bool = False
-    if all([x < 0 for x in scores]): is_finished = True
+    if any([x < 0 for x in scores]): is_finished = True
     if is_olas(game_status):
-        if result['winner'] != OLAS_KYOKU-1: is_finished = True
+        if result['winner'] != OLAS_KYOKU: is_finished = True
         # ラス親は起家から最も遠いので、他家の点数に比べて真に大きくなくてはならない
         if all([x < scores[OLAS_KYOKU-1] for x in scores[0:OLAS_KYOKU-1]]):
             is_finished = True

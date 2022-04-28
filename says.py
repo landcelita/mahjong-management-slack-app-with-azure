@@ -207,9 +207,9 @@ def tsumo(game_id, say):
                                 json.dumps({"val": "10"} | hidden),
                                 json.dumps({"val": "11"} | hidden),
                                 json.dumps({"val": "12"} | hidden),
-                                json.dumps({"val": "yakuman"} | hidden),
-                                json.dumps({"val": "double_yakuman"} | hidden),
-                                json.dumps({"val": "triple_yakuman"} | hidden),
+                                json.dumps({"val": "1000"} | hidden),
+                                json.dumps({"val": "2000"} | hidden),
+                                json.dumps({"val": "3000"} | hidden),
                             ]
                         ),
                         "action_id": "static_select-action"
@@ -333,29 +333,30 @@ def confirmation(game_id: str, result_id: str, result: Dict[str, Union[int, None
          riichis: List[bool], say):
     hidden = {'game_id': game_id, 'result_id': result_id}
     content = "以下の内容でよろしいですか?\n\n"
+    resultc = result.copy()
 
-    if result['fu'] == FU_MAX: 
-        result['fu'] = "満貫"
-    elif result['fu'] is not None:
-        result['fu'] = f"{result['fu']}符"
+    if resultc['fu'] == FU_MAX: 
+        resultc['fu'] = "満貫"
+    elif resultc['fu'] is not None:
+        resultc['fu'] = f"{resultc['fu']}符"
     else:
-        result['fu'] = ""
+        resultc['fu'] = ""
 
     riichi_str = "リーチ者: "
     for i in range(len(riichis)):
         if riichis[i] == True: riichi_str += f"{i+1} "
 
-    if result['tsumo_ron'] is None:
+    if resultc['tsumo_ron'] is None:
         content += "流局\n" + riichi_str
-    elif result['tsumo_ron']:
+    elif resultc['tsumo_ron']:
         content += "ロン\n"
-        content += f"上がり: {result['tsumo_ron']} → {result['winner']}\n"
-        content += f"{result['han']}翻" + result['fu'] + "\n"
+        content += f"上がり: {resultc['tsumo_ron']} → {resultc['winner']}\n"
+        content += f"{SCORE[str(resultc['han'])]['represent']}" + resultc['fu'] + "\n"
         content += riichi_str
     else:
         content += "ツモ\n"
-        content += f"上がり: {result['winner']}\n"
-        content += f"{result['han']}翻" + result['fu'] + "\n"
+        content += f"上がり: {resultc['winner']}\n"
+        content += f"{SCORE[str(resultc['han'])]['represent']}" + resultc['fu'] + "\n"
         content += riichi_str
 
     say(

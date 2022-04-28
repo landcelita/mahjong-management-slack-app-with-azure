@@ -6,6 +6,7 @@ FU_MAX = 999999999
 
 SCORE = {
     '1': {
+        'represent': '1翻',
         'fu_required': True,
         'fu': ['30', '40', '50', '60', '70', '80', '90', '100', '110'],
         '30': { 
@@ -46,6 +47,7 @@ SCORE = {
         },
     },
     '2': {
+        'represent': '2翻',
         'fu_required': True,
         'fu': ['20', '25', '30', '40', '50', '60', '70', '80', '90', '100', '110'],
         '20': {
@@ -94,6 +96,7 @@ SCORE = {
         },
     },
     '3': {
+        'represent': '3翻',
         'fu_required': True,
         'fu': ['20', '25', '30', '40', '50', '60', f'{FU_MAX}'],
         '20': {
@@ -126,6 +129,7 @@ SCORE = {
         }
     },
     '4': {
+        'represent': '4翻',
         'fu_required': True,
         'fu': ['20', '25', '30', f'{FU_MAX}'],
         '20': {
@@ -146,56 +150,67 @@ SCORE = {
         }
     },
     '5': {
+        'represent': '5翻',
         'fu_required': False,
         'ko': {'ron': 8000, 'tsumo': [2000, 4000]},
         'oya': {'ron': 12000, 'tsumo': 4000},
     },
     '6': {
+        'represent': '6翻',
         'fu_required': False,
         'ko': {'ron': 12000, 'tsumo': [3000, 6000]},
         'oya': {'ron': 18000, 'tsumo': 6000},
     },
     '7': {
+        'represent': '7翻',
         'fu_required': False,
         'ko': {'ron': 12000, 'tsumo': [3000, 6000]},
         'oya': {'ron': 18000, 'tsumo': 6000},
     },
     '8': {
+        'represent': '8翻',
         'fu_required': False,
         'ko': {'ron': 16000, 'tsumo': [4000, 8000]},
         'oya': {'ron': 24000, 'tsumo': 8000},
     },
     '9': {
+        'represent': '9翻',
         'fu_required': False,
         'ko': {'ron': 16000, 'tsumo': [4000, 8000]},
         'oya': {'ron': 24000, 'tsumo': 8000},
     },
     '10': {
+        'represent': '10翻',
         'fu_required': False,
         'ko': {'ron': 16000, 'tsumo': [4000, 8000]},
         'oya': {'ron': 24000, 'tsumo': 8000},
     },
     '11': {
+        'represent': '11翻',
         'fu_required': False,
         'ko': {'ron': 24000, 'tsumo': [6000, 12000]},
         'oya': {'ron': 36000, 'tsumo': 12000},
     },
     '12': {
+        'represent': '12翻',
         'fu_required': False,
         'ko': {'ron': 24000, 'tsumo': [6000, 12000]},
         'oya': {'ron': 36000, 'tsumo': 12000},
     },
-    'yakuman': {
+    '1000': {
+        'represent': '役満',
         'fu_required': False,
         'ko': {'ron': 32000, 'tsumo': [8000, 16000]},
         'oya': {'ron': 48000, 'tsumo': 16000},
     },
-    'double_yakuman': {
+    '2000': {
+        'represent': 'ダブル役満',
         'fu_required': False,
         'ko': {'ron': 64000, 'tsumo': [16000, 32000]},
         'oya': {'ron': 96000, 'tsumo': 32000},
     },
-    'triple_yakuman': {
+    '3000': {
+        'represent': 'トリプル役満',
         'fu_required': False,
         'ko': {'ron': 96000, 'tsumo': [24000, 48000]},
         'oya': {'ron': 144000, 'tsumo': 48000},
