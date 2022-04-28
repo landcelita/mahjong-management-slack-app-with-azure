@@ -54,7 +54,6 @@ def handle_confirm_players(ack, body, say, client):
     say("member(あとでちゃんと処理入れとく)")
     says.wait_done(1, 1, 0, game_id, say)
 
-    # test中は消えると面倒なのでコメントアウト　あとで戻しておく
     util.delete_this_message(body, client)
 
 @app.action("actionId-done")
@@ -77,7 +76,6 @@ def handle_done(ack, body, say, client):
     elif value['val'] == 'ryukyoku':
         says.ryukyoku(value['game_id'], say)
 
-    # test中は消えると面倒なのでコメントアウト　あとで戻しておく
     util.delete_this_message(body, client)
 
 @app.action("actionId-tsumo-han")
@@ -105,8 +103,52 @@ def handle_tsumo_han(ack, body, say, client):
 
     if SCORE[str(han)]['fu_required']:
         says.fu(str(game_id), str(result_id), str(han), say)
+    else:
+        says.riichi(str(game_id), str(result_id), say)
+        
+    util.delete_this_message(body, client)
 
-    # test中は消えると面倒なのでコメントアウト　あとで戻しておく
+@app.action("actionId-ron-han")
+def handle_some_action(ack, body, logger, say):
+    ack()
+    han_option = body['state']['values']['han']['static_select-action']['selected_option']
+    winner_option = body['state']['values']['winner']['radio_buttons-action']['selected_option']
+    loser_option = body['state']['values']['loser']['radio_buttons-action']['selected_option']
+
+    winner_value = None
+    loser_value = None
+
+    validated = True
+    if han_option is None:
+        say("翻数を選択してください")
+        validated = False
+    if winner_option is None:
+        say("上がった人を選択してください")
+        validated = False
+    if loser_option is None:
+        say("当てられた人を選択してください")
+        validated = False
+    if winner_option is not None and loser_option is not None:
+        winner_value = json.loads(winner_option['value'])
+        loser_value = json.loads(loser_option['value'])
+        if winner_value['val'] == loser_value['val']:
+            say("上がった人と当てられた人は別の人を選んでください")
+            validated = False
+    if not validated: return
+
+    han_value = json.loads(han_option['value'])
+    han = int(han_value['val'])
+    winner = int(winner_value['val'])
+    loser = int(loser_value['val'])
+    game_id = int(han_value['game_id'])
+    
+    result_id = controller.confirm_result(game_id, winner, loser, han)
+
+    if SCORE[str(han)]['fu_required']:
+        says.fu(str(game_id), str(result_id), str(han), say)
+    else:
+        says.riichi(str(game_id), str(result_id), say)
+        
     util.delete_this_message(body, client)
 
 @app.action("actionId-fu")
@@ -128,7 +170,6 @@ def handle_fu(ack, body, say, client):
     controller.update_fu(result_id, fu)
     says.riichi(str(game_id), str(result_id), say)
 
-    # test中は消えると面倒なのでコメントアウト　あとで戻しておく
     util.delete_this_message(body, client)
 
 @app.action("actionId-riichi")
@@ -147,7 +188,6 @@ def handle_riichi(ack, body, say, client):
     result = controller.get_result(result_id)
     says.confirmation(str(game_id), str(result_id), result, riichis, say)
 
-    # test中は消えると面倒なのでコメントアウト　あとで戻しておく
     util.delete_this_message(body, client)
 
 @app.action("actionId-confirmation-ok")
@@ -167,7 +207,6 @@ def handle_confirmation_ok(ack, body, logger, say):
     else:
         says.game_over(say)
 
-    # test中は消えると面倒なのでコメントアウト　あとで戻しておく
     util.delete_this_message(body, client)
 
 # 以下はINFOを抑制するため

@@ -3,7 +3,39 @@ from pprint import pprint
 from typing import Dict, List, Union
 import utility as util
 from const import BA, KYOKU, SCORE, FU_MAX
-import controller
+
+def han_option_dicts(hidden):
+    return util.generate_option_dicts(
+    ["1翻", "2翻", "3翻", "4翻", "5翻", "6翻", "7翻", "8翻", "9翻", "10翻", "11翻", "12翻", "役満", "ダブル役満", "トリプル役満"],
+    [
+        json.dumps({"val": "1"} | hidden),
+        json.dumps({"val": "2"} | hidden),
+        json.dumps({"val": "3"} | hidden),
+        json.dumps({"val": "4"} | hidden),
+        json.dumps({"val": "5"} | hidden),
+        json.dumps({"val": "6"} | hidden),
+        json.dumps({"val": "7"} | hidden),
+        json.dumps({"val": "8"} | hidden),
+        json.dumps({"val": "9"} | hidden),
+        json.dumps({"val": "10"} | hidden),
+        json.dumps({"val": "11"} | hidden),
+        json.dumps({"val": "12"} | hidden),
+        json.dumps({"val": "1000"} | hidden),
+        json.dumps({"val": "2000"} | hidden),
+        json.dumps({"val": "3000"} | hidden),
+    ]
+)
+
+def player_option_dicts(hidden):
+    return util.generate_option_dicts(
+        ["player1", "player2", "player3", "player4"],
+        [
+            json.dumps({"val": "1"} | hidden),
+            json.dumps({"val": "2"} | hidden),
+            json.dumps({"val": "3"} | hidden),
+            json.dumps({"val": "4"} | hidden),
+        ]
+    )
 
 def gamestart(say):
     say(
@@ -166,15 +198,7 @@ def tsumo(game_id, say):
                     },
                     "accessory": {
                         "type": "radio_buttons",
-                        "options": util.generate_option_dicts(
-                                ["player1", "player2", "player3", "player4"],
-                                [
-                                    json.dumps({"val": "1"} | hidden),
-                                    json.dumps({"val": "2"} | hidden),
-                                    json.dumps({"val": "3"} | hidden),
-                                    json.dumps({"val": "4"} | hidden),
-                                ]
-                        ),
+                        "options": player_option_dicts(hidden),
                         "action_id": "radio_buttons-action"
                     }
                 },
@@ -192,26 +216,7 @@ def tsumo(game_id, say):
                             "text": "翻数を選んでください",
                             "emoji": True
                         },
-                        "options": util.generate_option_dicts(
-                            ["1翻", "2翻", "3翻", "4翻", "5翻", "6翻", "7翻", "8翻", "9翻", "10翻", "11翻", "12翻", "役満", "ダブル役満", "トリプル役満"],
-                            [
-                                json.dumps({"val": "1"} | hidden),
-                                json.dumps({"val": "2"} | hidden),
-                                json.dumps({"val": "3"} | hidden),
-                                json.dumps({"val": "4"} | hidden),
-                                json.dumps({"val": "5"} | hidden),
-                                json.dumps({"val": "6"} | hidden),
-                                json.dumps({"val": "7"} | hidden),
-                                json.dumps({"val": "8"} | hidden),
-                                json.dumps({"val": "9"} | hidden),
-                                json.dumps({"val": "10"} | hidden),
-                                json.dumps({"val": "11"} | hidden),
-                                json.dumps({"val": "12"} | hidden),
-                                json.dumps({"val": "1000"} | hidden),
-                                json.dumps({"val": "2000"} | hidden),
-                                json.dumps({"val": "3000"} | hidden),
-                            ]
-                        ),
+                        "options": han_option_dicts(hidden),
                         "action_id": "static_select-action"
                     }
                 },
@@ -224,7 +229,62 @@ def tsumo(game_id, say):
     )
 
 def ron(game_id, say):
-    pass
+    hidden = {'game_id': game_id}
+
+    say(
+        {
+            "blocks": [
+                {
+                    "type": "section",
+                    "block_id": "winner",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "上がった人"
+                    },
+                    "accessory": {
+                        "type": "radio_buttons",
+                        "options": player_option_dicts(hidden),
+                        "action_id": "radio_buttons-action"
+                    }
+                },
+                {
+                    "type": "section",
+                    "block_id": "loser",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "当てられた人"
+                    },
+                    "accessory": {
+                        "type": "radio_buttons",
+                        "options": player_option_dicts(hidden),
+                        "action_id": "radio_buttons-action"
+                    }
+                },
+                {
+                    "type": "section",
+                    "block_id": "han",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "翻数"
+                    },
+                    "accessory": {
+                        "type": "static_select",
+                        "placeholder": {
+                            "type": "plain_text",
+                            "text": "翻数を選んでください",
+                            "emoji": True
+                        },
+                        "options": han_option_dicts(hidden),
+                        "action_id": "static_select-action"
+                    }
+                },
+                {
+                    "type": "actions",
+                    "elements": [ util.confirm_button("value", "actionId-ron-han") ]
+                }
+            ]
+        }
+    )
 
 def ryukyoku(game_id, say):
     pass
@@ -255,7 +315,7 @@ def fu(game_id: str, result_id: str, han: str, say):
                         "type": "static_select",
                         "placeholder": {
                             "type": "plain_text",
-                            "text": "翻数を選んでください",
+                            "text": "符数を選んでください",
                             "emoji": True
                         },
                         "options": util.generate_option_dicts(
@@ -350,7 +410,7 @@ def confirmation(game_id: str, result_id: str, result: Dict[str, Union[int, None
         content += "流局\n" + riichi_str
     elif resultc['tsumo_ron']:
         content += "ロン\n"
-        content += f"上がり: {resultc['tsumo_ron']} → {resultc['winner']}\n"
+        content += f"上がり: {resultc['winner']} ← {resultc['tsumo_ron']}\n"
         content += f"{SCORE[str(resultc['han'])]['represent']}" + resultc['fu'] + "\n"
         content += riichi_str
     else:
@@ -398,9 +458,6 @@ def confirmation(game_id: str, result_id: str, result: Dict[str, Union[int, None
 
 def kyoku_result(old_scores, old_game_status, new_scores, say):
 
-    pprint(old_scores)
-    pprint(old_game_status)
-    pprint(new_scores)
     diff = [new_scores[i] - old_scores[i] for i in range(len(new_scores))]
 
     text = f"{BA[old_game_status['ba']]}{KYOKU[old_game_status['kyoku']]}局"
