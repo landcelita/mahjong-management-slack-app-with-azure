@@ -52,7 +52,7 @@ def handle_confirm_players(ack, body, say, client):
     game_id = controller.init(tonpu_or_hanchan, player1Id, player2Id, player3Id, player4Id)
 
     say("member(saysの方にあとでちゃんと処理入れとく,東風戦か半荘戦かも記述)")
-    says.wait_done(1, 1, 0, game_id, say)
+    says.wait_done(say, 1, 1, 0, game_id)
 
     util.delete_this_message(body, client)
 
@@ -70,11 +70,11 @@ def handle_done(ack, body, say, client):
 
     value = json.loads(option['value'])
     if value['val'] == 'tsumo':
-        says.tsumo(value['game_id'], say)
+        says.tsumo(say, value['game_id'])
     elif value['val'] == 'ron':
-        says.ron(value['game_id'], say)
+        says.ron(say, value['game_id'])
     elif value['val'] == 'ryukyoku':
-        says.tenpai(value['game_id'], say)
+        says.tenpai(say, value['game_id'])
 
     util.delete_this_message(body, client)
 
@@ -102,9 +102,9 @@ def handle_tsumo_han(ack, body, say, client):
     result_id = controller.confirm_result(game_id, winner, 0, han)
 
     if SCORE[str(han)]['fu_required']:
-        says.fu(str(game_id), str(result_id), str(han), say)
+        says.fu(say, str(game_id), str(result_id), str(han))
     else:
-        says.riichi(str(game_id), str(result_id), say)
+        says.riichi(say, str(game_id), str(result_id))
         
     util.delete_this_message(body, client)
 
@@ -145,9 +145,9 @@ def handle_ron_han(ack, body, logger, say):
     result_id = controller.confirm_result(game_id, winner, loser, han)
 
     if SCORE[str(han)]['fu_required']:
-        says.fu(str(game_id), str(result_id), str(han), say)
+        says.fu(say, str(game_id), str(result_id), str(han))
     else:
-        says.riichi(str(game_id), str(result_id), say)
+        says.riichi(say, str(game_id), str(result_id))
         
     util.delete_this_message(body, client)
 
@@ -166,7 +166,7 @@ def handle_tenpai(ack, body, say, client):
     
     result_id = controller.confirm_result(game_id, RYUKYOKU_WINNER, None, None)
     controller.confirm_tenpai(result_id, tenpais)
-    says.riichi(str(game_id), str(result_id), say)
+    says.riichi(say, str(game_id), str(result_id))
 
     util.delete_this_message(body, client)
 
@@ -187,7 +187,7 @@ def handle_fu(ack, body, say, client):
     result_id = int(fu_value['result_id'])
 
     controller.update_fu(result_id, fu)
-    says.riichi(str(game_id), str(result_id), say)
+    says.riichi(say, str(game_id), str(result_id))
 
     util.delete_this_message(body, client)
 
@@ -205,7 +205,7 @@ def handle_riichi(ack, body, say, client):
         riichis[int(value['val']) - 1] = True
     controller.confirm_riichi(result_id, riichis)
     result = controller.get_result(result_id)
-    says.confirmation(str(game_id), str(result_id), result, riichis, say)
+    says.confirmation(say, str(game_id), str(result_id), result, riichis)
 
     util.delete_this_message(body, client)
 
@@ -219,10 +219,10 @@ def handle_confirmation_ok(ack, body, logger, say):
     old_scores, old_game_status, new_scores, new_game_status\
         = controller.settle(game_id, result_id)
     
-    says.kyoku_result(old_scores, old_game_status, new_scores, say)
+    says.kyoku_result(say, old_scores, old_game_status, new_scores)
     if not new_game_status['finished']:
-        says.wait_done(new_game_status['ba'], new_game_status['kyoku'], \
-                    new_game_status['honba'], game_id, say)
+        says.wait_done(say, new_game_status['ba'], new_game_status['kyoku'], \
+                    new_game_status['honba'], game_id)
     else:
         says.game_over(say)
 

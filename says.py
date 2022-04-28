@@ -145,7 +145,7 @@ def gamestart(say):
         }
     )
 
-def wait_done(ba, kyoku, honba, game_id, say):
+def wait_done(say, ba, kyoku, honba, game_id):
     statement = BA[ba] + KYOKU[kyoku] + "局"
     if honba > 0:
         statement += f" {honba}本場"
@@ -183,7 +183,7 @@ def wait_done(ba, kyoku, honba, game_id, say):
         }
     )
 
-def tsumo(game_id, say):
+def tsumo(say, game_id):
     hidden = {'game_id': game_id}
 
     say(
@@ -228,7 +228,7 @@ def tsumo(game_id, say):
         }
     )
 
-def ron(game_id, say):
+def ron(say, game_id):
     hidden = {'game_id': game_id}
 
     say(
@@ -286,7 +286,7 @@ def ron(game_id, say):
         }
     )
 
-def tenpai(game_id, say):
+def tenpai(say, game_id):
     hidden = {'game_id': game_id}
 
     say(
@@ -342,7 +342,7 @@ def tenpai(game_id, say):
         }
     )
 
-def fu(game_id: str, result_id: str, han: str, say):
+def fu(say, game_id: str, result_id: str, han: str):
     hidden = {'game_id': game_id, 'result_id': result_id}
     fus = SCORE[han]['fu']
     fu_list = []
@@ -386,7 +386,7 @@ def fu(game_id: str, result_id: str, han: str, say):
         }
     )
 
-def riichi(game_id: str, result_id: str, say):
+def riichi(say, game_id: str, result_id: str):
     hidden = {'game_id': game_id, 'result_id': result_id}
 
     say(
@@ -442,8 +442,8 @@ def riichi(game_id: str, result_id: str, say):
         }
     )
 
-def confirmation(game_id: str, result_id: str, result: Dict[str, Union[int, None]],
-         riichis: List[bool], say):
+def confirmation(say, game_id: str, result_id: str, result: Dict[str, Union[int, None]],
+         riichis: List[bool]):
     hidden = {'game_id': game_id, 'result_id': result_id}
     content = "以下の内容でよろしいですか?\n\n"
     resultc = result.copy()
@@ -509,7 +509,7 @@ def confirmation(game_id: str, result_id: str, result: Dict[str, Union[int, None
         }
     )
 
-def kyoku_result(old_scores, old_game_status, new_scores, say):
+def kyoku_result(say, old_scores, old_game_status, new_scores):
 
     diff = [new_scores[i] - old_scores[i] for i in range(len(new_scores))]
 
