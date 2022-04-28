@@ -115,3 +115,7 @@ def read_riichi(whereval: int , wherecol: str = "RiichiID",
         return res[-1]
     else:
         return res
+
+def create_tenpai(vals: List[int], cols: List[str] = \
+        ["ResultID", "Player1Tenpai", "Player2Tenpai", "Player3Tenpai", "Player4Tenpai"]):
+    return crud.exec_insert_sql("Tenpai", vals, cols)

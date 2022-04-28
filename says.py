@@ -286,7 +286,7 @@ def ron(game_id, say):
         }
     )
 
-def ryukyoku(game_id, say):
+def tenpai(game_id, say):
     hidden = {'game_id': game_id}
 
     say(

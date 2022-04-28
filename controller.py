@@ -24,7 +24,7 @@ def init(tonpu_or_hanchan: bool, player1Id: str, player2Id: str, player3Id: str,
     return game_id
 
 def confirm_result(game_id: int, winner: int, tsumo_ron: Union[int, None],\
-        han: int, fu: Union[int, None] = None):
+        han: Union[int, None], fu: Union[int, None] = None):
     # tsumo_ron: 0のときはツモ、1-4のときはロンされた人
 
     game_status = data.read_game_status(game_id)
@@ -41,6 +41,9 @@ def confirm_result(game_id: int, winner: int, tsumo_ron: Union[int, None],\
     result_id = data.create_result(result)
 
     return result_id
+
+def confirm_tenpai(result_id: int, tenpai: List[bool]):
+    data.create_tenpai([result_id, *tenpai])
 
 def update_fu(result_id: int, fu: int):
     updating_data = {"fu": fu}
@@ -73,7 +76,7 @@ def settle(game_id: int, result_id: int):
     return scores, game_status, new_scores, new_game_status
 
 def settle_ryukyoku(result, scores, game_status, tenpai):
-    pass # todo calc_new_status()だけは全部統一したほうがよさそう？
+    pass # todo calc_new_status()は名前を変えて、テンパイはテンパイ用に処理を作ろう(あまりに流れが違うので)。
 
 def settle_tsumo(result, riichis, scores, game_status, game_id):
     new_scores = business.calc_new_score_tsumo(result, riichis, scores, game_status)

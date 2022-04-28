@@ -9,7 +9,7 @@ from slack_sdk import WebClient
 import controller
 import utility as util
 import says
-from const import BA, KYOKU, SCORE, FU_MAX
+from const import BA, KYOKU, RYUKYOKU_WINNER, SCORE, FU_MAX
 
 logging.basicConfig(level=logging.INFO)
 
@@ -74,7 +74,7 @@ def handle_done(ack, body, say, client):
     elif value['val'] == 'ron':
         says.ron(value['game_id'], say)
     elif value['val'] == 'ryukyoku':
-        says.ryukyoku(value['game_id'], say)
+        says.tenpai(value['game_id'], say)
 
     util.delete_this_message(body, client)
 
@@ -109,7 +109,7 @@ def handle_tsumo_han(ack, body, say, client):
     util.delete_this_message(body, client)
 
 @app.action("actionId-ron-han")
-def handle_some_action(ack, body, logger, say):
+def handle_ron_han(ack, body, logger, say):
     ack()
     han_option = body['state']['values']['han']['static_select-action']['selected_option']
     winner_option = body['state']['values']['winner']['radio_buttons-action']['selected_option']
@@ -149,6 +149,25 @@ def handle_some_action(ack, body, logger, say):
     else:
         says.riichi(str(game_id), str(result_id), say)
         
+    util.delete_this_message(body, client)
+
+@app.action("actionId-tenpai")
+def handle_tenpai(ack, body, say, client):
+    ack()
+
+    tenpai_options = body['state']['values']['tenpai']['checkboxes-action']['selected_options']
+    hidden = json.loads(body['message']['blocks'][0]['accessory']['options'][0]['value'])
+    game_id = int(hidden['game_id'])
+
+    tenpais = [False, False, False, False]
+    for option in tenpai_options:
+        value = json.loads(option['value'])
+        tenpais[int(value['val']) - 1] = True
+    
+    result_id = controller.confirm_result(game_id, RYUKYOKU_WINNER, None, None)
+    controller.confirm_tenpai(result_id, tenpais)
+    says.riichi(str(game_id), str(result_id), say)
+
     util.delete_this_message(body, client)
 
 @app.action("actionId-fu")
@@ -227,7 +246,7 @@ def handle_checkboxes_action(ack, body, logger):
     ack()
 
 @app.action("radio")
-def handle_some_action(ack, body, logger):
+def handle_radio(ack, body, logger):
     ack()
 
 @app.event("message")

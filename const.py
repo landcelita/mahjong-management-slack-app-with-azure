@@ -4,6 +4,8 @@ KYOKU = ['error', '一', '二', '三', '四']
 
 FU_MAX = 999999999
 
+RYUKYOKU_WINNER = 0
+
 SCORE = {
     '1': {
         'represent': '1翻',
