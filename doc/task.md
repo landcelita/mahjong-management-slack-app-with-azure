@@ -1,5 +1,7 @@
 # 残タスク
 
+ - readmeの作成
+ - 本番launch時はhttps://docs.microsoft.com/en-us/azure/architecture/example-scenario/private-web-app/private-web-appを参考に
  - 型安全性が全く保証されていない(pythonだからしゃーないけど)。あとで各関数について型ヒントを付与しとくべき。
     - というかTypeScript使えるらしいし、そっちで作り直すか。。。
  - そのうちクリーンアーキテクチャを試してみたい

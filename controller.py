@@ -1,6 +1,5 @@
 from pprint import pprint
 from typing import Union, List
-from crud import exec_insert_sql, exec_select_sql, exec_update_sql, exec_delete_sql
 import data
 import business
 from const import SCORE
