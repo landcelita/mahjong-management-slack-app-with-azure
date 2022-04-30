@@ -1,13 +1,16 @@
 # Mahjong Management Slack bot with Azure App Service & Azure SQL Database
 
 麻雀の進行状況を管理してくれるslack botです。
+azureの構成など間違っている可能性はあります。
 
 ## 大雑把な使い方(後できちんと書く)
 - アプリをローカルで動かす場合
     - 適当なAzure SQL DBのインスタンスを作成して接続
         - DBも含めてローカルで動かせるかも? [この辺](https://www.sqlshack.com/how-to-set-up-and-run-sql-server-docker-image/)を参考にすればできる気はする(そのうち試す)
+        - django使ってsqlite使っとけばいい気もするが、流石にめんどくさすぎる
     - 上で作成したDBインスタンスに接続するために.envに必要な環境変数を書く(.env.exampleを参考に)
     - [ここ](https://docs.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver15)を参考にODBCドライバをインストール
+    - `pip install -r requirements.txt`で必要なパッケージをすべてインストール
     - migrate.sqlを実行
         - vscodeの[拡張機能](https://marketplace.visualstudio.com/items?itemName=ms-mssql.mssql)を使ってもできるし、SSMS使ってもできる
     - `ngrok http 8089`でローカルホストを公開
@@ -31,6 +34,7 @@
     - "ゲームスタート"でゲームの開始
 - アプリをAzureで動かす場合
     - Todo
+    - [ここ](https://medium.com/data-science-lab-amsterdam/deploying-a-python-app-on-azure-ec6b587a4d20)を参考にしていろいろやった。ただ、ポートのところとかちょいちょい間違えているのであとできちんと手順を書こうと思う。
 
 ## 構成
 詳しくはdocの中

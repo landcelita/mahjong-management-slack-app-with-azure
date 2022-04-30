@@ -260,6 +260,10 @@ from flask import Flask, request
 flask_app = Flask(__name__)
 handler = SlackRequestHandler(app)
 
+@flask_app.route("/alive/<prm>")
+def alive(prm):
+    return "I'm Alive, " + prm
+
 @flask_app.route("/slack/events", methods=["POST"])
 def slack_events():
     r = urllib.parse.unquote(request.get_data().decode())
@@ -270,4 +274,4 @@ def slack_events():
     return handler.handle(request)
 
 if __name__ == "__main__":
-    flask_app.run(host="0.0.0.0", port=3000)
+    flask_app.run()
